@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แผนประกันเงินออม + 50 โรคร้ายแรง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+    :root {
+        /* ธีมสีส้ม FWD */
+        --primary: #e86614; 
+        --primary-light: #fff2e8;
+        --primary-dark: #c85331;
+        --text-dark: #333333;
+        --text-grey: #666666;
+        --bg-color: #fcf9f5;
+        --border-color: #e5e5e5;
+        --line-green: #06C755;
+        --impact-red: #d32f2f;
+        
+        /* ธีมสีสำหรับหน้ารายชื่อโรค */
+        --brand-orange: #e87722; 
+        --brand-orange-dark: #c85331;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Prompt', sans-serif;
+        background-color: var(--bg-color);
+        margin: 0; padding: 0;
+        color: var(--text-dark);
+        padding-bottom: 120px;
+    }
+
+    .main-banner { max-width: 1100px; margin: 30px auto 15px auto; padding: 0 20px; }
+    .main-banner > img { width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: block; }
+
+    /* --- LAYOUT CONTAINER (ปรับให้ตรึง 2 ฝั่งเสมอ) --- */
+    .container-scroll-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+    }
+
+    .container {
+        max-width: 1100px; 
+        min-width: 950px; /* ล็อกความกว้างขั้นต่ำไม่ให้กล่องตกลงมา */
+        margin: 0 auto 20px auto; 
+        padding: 0 20px;
+        display: flex; 
+        gap: 25px; 
+        align-items: stretch;
+    }
+
+    /* --- LEFT PANEL --- */
+    .left-panel {
+        width: 420px; flex-shrink: 0; 
+        display: flex; flex-direction: column; 
+    }
+    .input-card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; padding: 20px 25px; margin-bottom: 15px;}
+    .input-card h2 { font-size: 18px; margin: 0 0 15px 0; color: var(--text-dark); }
+
+    .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+    .form-group { flex: 1; }
+    .form-group label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
+
+    .gender-select { display: flex; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+    .gender-btn { flex: 1; padding: 8px; border: none; background: #fafafa; cursor: pointer; font-family: 'Prompt'; font-size: 15px; transition: 0.2s; }
+    .gender-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 600; border: 1px solid var(--primary); }
+
+    input[type="number"], input[type="text"] { width: 100%; padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Prompt'; font-size: 15px; height: 40px; transition: 0.2s; }
+    input[type="number"]:focus, input[type="text"]:focus { outline: none; border-color: var(--primary); }
+
+    .sum-insured-box > label { font-weight: 600; color: var(--text-dark); margin-bottom: 10px; display: block; font-size: 15px; }
+
+    /* --- แถบเลือกแผน ปรับให้มีความเด้ง Bouncy แบบ 3D --- */
+    .plan-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    .plan-opt-btn { 
+        border: 2px solid var(--primary); 
+        border-radius: 8px; 
+        padding: 20px 5px 10px 5px; 
+        text-align: center; 
+        cursor: pointer; 
+        background: white; 
+        position: relative; 
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
+    }
+    .plan-opt-btn:hover { 
+        background: var(--primary-light); 
+        transform: translateY(-4px) scale(1.02); 
+        box-shadow: 0 8px 15px rgba(232, 102, 20, 0.15); 
+        z-index: 10;
+    }
+    .plan-opt-btn:active { 
+        transform: translateY(1px) scale(0.98); 
+        box-shadow: 0 2px 4px rgba(232, 102, 20, 0.1); 
+    }
+    .plan-opt-btn.active { 
+        border-color: var(--primary); 
+        background: var(--primary); 
+        box-shadow: 0 6px 12px rgba(232, 102, 20, 0.3); 
+        transform: scale(1.02); 
+        z-index: 5;
+    }
+    .plan-opt-btn.active:hover { 
+        transform: translateY(-2px) scale(1.04); 
+        background: var(--primary); 
+        box-shadow: 0 8px 15px rgba(232, 102, 20, 0.4); 
+    }
+    
+    .plan-tag { position: absolute; top: 5px; left: 8px; font-size: 11.5px; font-weight: 700; color: var(--primary); }
+    .plan-opt-btn.active .plan-tag { color: rgba(255,255,255,0.9); }
+    .plan-opt-btn .pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #cf5a10; color: white; font-size: 11px; font-weight: 600; padding: 2px 12px; border-radius: 20px; border: 1px solid white; }
+    .plan-name { font-weight: 700; font-size: 17px; color: var(--primary); margin-bottom: 3px; transition: 0.2s;}
+    .plan-desc { font-size: 12.5px; color: var(--text-grey); line-height: 1.3; transition: 0.2s;}
+    .plan-opt-btn.active .plan-name, .plan-opt-btn.active .plan-desc { color: white; }
+    .plan-opt-btn.full-width { grid-column: span 2; }
+
+    .custom-sliders-box { background: #fff; padding: 15px 20px; border-radius: 10px; border: 1px dashed var(--border-color); }
+    .slider-group { margin-bottom: 20px; }
+    .slider-group:last-child { margin-bottom: 0; }
+    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .slider-label { font-size: 13.5px; font-weight: 600; color: var(--text-dark); }
+    .slider-input-wrapper { width: 120px; }
+    .slider-input-wrapper input { height: 34px; font-size: 14.5px; text-align: right; color: var(--primary); font-weight: 600; background-color: var(--primary-light); border: 1px solid var(--primary); }
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 6px; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #e0e0e0; border-radius: 6px; }
+    input[type=range]::-webkit-slider-thumb { height: 26px; width: 26px; border-radius: 50%; background: var(--primary); cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+
+    .error-msg { color: #d32f2f; font-size: 13px; margin-top: 10px; display: none; font-weight: 500; }
+    .requirements { margin-top: 15px; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px 20px; background-color: #fafafa; }
+    .requirements h3 { font-size: 18px; display: flex; align-items: center; gap: 8px; color: var(--primary); margin: 0 0 12px 0; }
+    .req-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--text-grey); }
+    .req-list li { margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; }
+    .req-list i { margin-top: 4px; color: var(--line-green); }
+
+    /* --- AGENT CARD (ดันชิดล่างสุดเสมอ) --- */
+    .agent-card-left { 
+        background: white; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--primary); 
+        margin-top: auto; 
+    }
+    .agent-profile-img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); flex-shrink: 0; }
+    .agent-info { flex: 1; }
+    .agent-info h4 { margin: 0 0 4px 0; color: var(--text-dark); font-size: 16px; }
+    .agent-info p { margin: 0 0 4px 0; color: var(--text-grey); font-size: 12.5px; }
+    .agent-info .phone { display: inline-block; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 12.5px; margin-top: 4px; text-decoration: none; transition: 0.2s; }
+    .agent-info .phone:hover { background: var(--primary); color: white; }
+
+    /* --- RIGHT PANEL --- */
+    .right-panel { 
+        flex: 1; 
+        display: flex; flex-direction: column; 
+    }
+    .header-right { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
+    .header-right h2 { font-size: 20px; margin: 0; color: var(--primary); }
+
+    .plan-card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(232, 102, 20, 0.1); margin-bottom: 15px;}
+    .plan-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .plan-title h3 { margin: 0; font-size: 18px; color: var(--text-dark); }
+    .plan-title p { margin: 4px 0 0 0; font-size: 13px; background: var(--bg-color); padding: 3px 10px; border-radius: 6px; display: inline-block; font-weight: 500;}
+    .plan-price-display { text-align: right; }
+    .price-amount { font-size: 30px; font-weight: 700; color: var(--primary); line-height: 1;}
+    
+    .plan-details { margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px; }
+    .detail-row { display: flex; justify-content: space-between; font-size: 14.5px; margin-bottom: 6px; color: var(--text-dark); align-items: center;}
+    .detail-val { font-weight: 600; text-align: right; font-size: 15.5px; }
+    .breakdown-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-grey); margin-bottom: 12px; padding-left: 15px;}
+    
+    /* Coverage Table */
+    .coverage-table-container { 
+        background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(232, 102, 20, 0.1); 
+        overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 15px;
+        flex: 1; 
+        display: flex; flex-direction: column;
+    }
+    .coverage-table-header { background: var(--primary); color: white; padding: 10px 20px; font-weight: 600; font-size: 15px; }
+    .coverage-table { width: 100%; border-collapse: collapse; font-size: 13.5px; white-space: nowrap; height: 100%;}
+    .coverage-table th, .coverage-table td { padding: 12px 20px; text-align: right; border-bottom: 1px solid var(--border-color); }
+    .coverage-table td:first-child { text-align: left; white-space: normal; }
+    .table-section-1 { background-color: #f8992e; color: white; font-weight: 600; }
+    .table-section-2 { background-color: #1a9aa8; color: white; font-weight: 600; }
+    .table-section-3 { background-color: #72c69b; color: white; font-weight: 600; }
+    .table-section-1 td, .table-section-2 td, .table-section-3 td { text-align: left !important; color: white !important;}
+    .td-bullet { padding-left: 35px !important; color: var(--text-grey); font-size: 12.5px;}
+    .td-highlight-text { color: var(--primary); font-weight: 600;}
+
+    /* --- ACTION BUTTONS --- */
+    .action-buttons-wrapper { 
+        display: flex; flex-direction: column; gap: 8px; 
+        margin-top: auto; 
+    }
+    
+    .btn-style { 
+        display: flex; align-items: center; justify-content: space-between; 
+        background: #fff; padding: 10px 15px; border-radius: 10px; text-decoration: none; 
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer; position: relative; overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .btn-style:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+    .btn-style:active { transform: translateY(1px) scale(0.99); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    .btn-maturity { border-left: 5px solid #05a044; border-right: 1px solid #eef8f2; border-top: 1px solid #eef8f2; border-bottom: 1px solid #eef8f2;}
+    .btn-maturity .brochure-icon { color: #05a044; background: #e6f7ef; border: 1px solid #05a044;}
+    .btn-maturity .brochure-text h4 { color: #05a044; }
+
+    .btn-disease { border-left: 5px solid #3b8796; border-right: 1px solid #e6f3f5; border-top: 1px solid #e6f3f5; border-bottom: 1px solid #e6f3f5;}
+    .btn-disease .brochure-icon { color: #3b8796; background: #e6f3f5; border: 1px solid #3b8796;}
+    .btn-disease .brochure-text h4 { color: #3b8796; }
+
+    .btn-flowchart { border-left: 5px solid #e88d22; border-right: 1px solid #fdf5e6; border-top: 1px solid #fdf5e6; border-bottom: 1px solid #fdf5e6;}
+    .btn-flowchart .brochure-icon { color: #e88d22; background: #fdf5e6; border: 1px solid #e88d22;}
+    .btn-flowchart .brochure-text h4 { color: #e88d22; }
+
+    .btn-pdf { border-left: 5px solid #c85331; border-right: 1px solid #faebe7; border-top: 1px solid #faebe7; border-bottom: 1px solid #faebe7;}
+    .btn-pdf .brochure-icon { color: #c85331; background: #faebe7; border: 1px solid #c85331;}
+    .btn-pdf .brochure-text h4 { color: #c85331; }
+    
+    .brochure-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;}
+    .brochure-text { flex: 1; margin-left: 15px; }
+    .brochure-text h4 { margin: 0; font-size: 14.5px; font-weight: 600; line-height: 1.2;}
+    .brochure-text p { margin: 3px 0 0 0; font-size: 12px; color: var(--text-grey); line-height: 1.2;}
+    .brochure-arrow { color: var(--text-grey); font-size: 16px; margin-left: 10px; transition: 0.2s;}
+    
+    .btn-maturity:hover .brochure-arrow i { color: #05a044; }
+    .btn-disease:hover .brochure-arrow i { color: #3b8796; }
+    .btn-flowchart:hover .brochure-arrow i { color: #e88d22; }
+    .btn-pdf:hover .brochure-arrow i { color: #c85331; }
+
+    /* --- INFOGRAPHIC MODALS BASE --- */
+    .modal-overlay-custom { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; justify-content: center; align-items: center; padding: 20px;}
+    .modal-content-custom { background: #fff; width: 100%; border-radius: 15px; position: relative; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: auto; font-family: 'Prompt', sans-serif;}
+    .close-info-btn { position: absolute; top: 12px; right: 18px; font-size: 28px; color: #999; cursor: pointer; line-height: 1; font-family: 'Prompt', sans-serif; transition: 0.2s; z-index: 900;}
+    .close-info-btn:hover { color: var(--primary); transform: scale(1.1);}
+
+    /* --- PAN & ZOOM FULLSCREEN SYSTEM --- */
+    .ig-fullscreen-inner {
+        background: #fdfaf6;
+        padding: 30px;
+        border-radius: 15px;
+        position: relative;
+        width: 100%;
+        transition: 0.3s;
+        max-width: 850px;
+        margin: 0 auto;
+        overflow: hidden; 
+    }
+    .fs-toggle-btn {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--primary);
+        z-index: 900;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: 0.2s;
+    }
+    .fs-toggle-btn:hover { background: var(--primary); color: white; }
+    .fs-document-area { width: 100%; transition: 0.3s; }
+
+    /* เมื่อกดขยายเต็มจอ */
+    .ig-fullscreen-inner.is-fullscreen {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100vw; height: 100vh;
+        max-width: none; max-height: none;
+        border-radius: 0;
+        z-index: 9999;
+        overflow: auto; 
+        -webkit-overflow-scrolling: touch; 
+        padding: 60px 20px 20px 20px; 
+    }
+    .ig-fullscreen-inner.is-fullscreen .fs-toggle-btn { top: 15px; left: 15px; position: fixed; }
+    .ig-fullscreen-inner.is-fullscreen .close-info-btn { top: 10px; right: 15px; position: fixed; }
+
+    /* 1. Bar Chart Modal (Maturity 90/20) */
+    .mat-title { color: #d68a27; font-size: 26px; font-weight: bold; margin: 0 0 5px 0;}
+    .mat-subtitle { font-size: 15px; color: #666; margin-bottom: 25px;}
+    
+    .bar-chart-wrapper { background: white; border-radius: 12px; padding: 30px 20px 20px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; border: 1px solid #f2e3d5;}
+    
+    /* Y-Axis Label */
+    .y-axis-label { font-size: 12px; font-weight: 400; color: #555; margin-bottom: 50px; display: flex; flex-direction: column; white-space: nowrap;}
+    
+    /* Main Bar */
+    .chart-bar-container { position: relative; height: 100px; width: 100%; margin-left: 20px;}
+    .chart-bar { background: linear-gradient(90deg, #f4c242, #e88d22); border-radius: 8px 8px 0 0; width: 95%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; position: relative; box-shadow: 0 -4px 10px rgba(232, 141, 34, 0.2);}
+    .bar-txt-pct { font-size: 28px; font-weight: bold; line-height: 1; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);}
+    .bar-txt-amt { font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 2px 15px; border-radius: 15px; margin-top: 5px;}
+    
+    /* Timeline Axis */
+    .x-axis-line { height: 2px; background: #ddd; width: 100%; margin-left: 20px; position: relative; display: flex; justify-content: space-between; align-items: center;}
+    .x-node { width: 24px; height: 24px; background: white; border: 2px solid #e88d22; border-radius: 50%; position: absolute; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #e88d22; top: -11px;}
+    .node-start { left: 0; }
+    .node-mid { left: 30%; }
+    .node-end { left: 95%; transform: translateX(-50%); background: #e88d22; color: white;}
+    
+    /* Timeline Labels */
+    .x-labels { display: flex; width: 100%; margin-left: 20px; margin-top: 25px; position: relative; height: 40px;}
+    .x-lbl { position: absolute; font-size: 12px; color: #666; text-align: center; width: 60px; transform: translateX(-50%);}
+    .lbl-start { left: 0; }
+    .lbl-mid { left: 30%; }
+    .lbl-end { left: 95%; }
+    
+    /* Premium Period Indicator */
+    .premium-period { position: absolute; left: 0; width: 30%; top: -30px; border-bottom: 2px solid #3b8796; text-align: center;}
+    .premium-period::before, .premium-period::after { content: ""; position: absolute; width: 2px; height: 8px; background: #3b8796; bottom: -2px;}
+    .premium-period::before { left: 0; }
+    .premium-period::after { right: 0; }
+    .premium-period span { font-size: 11.5px; color: #3b8796; font-weight: bold; position: relative; top: -18px;}
+
+    .mobile-scrollable-chart {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
+    }
+
+    /* Financial Summary Boxes */
+    .fin-summary-row { display: flex; gap: 15px; }
+    .fin-box { flex: 1; background: white; border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
+    .fin-box.highlight { border-color: #06C755; background: #f0fdf5; box-shadow: 0 4px 15px rgba(6, 199, 85, 0.15);}
+    .fin-label { font-size: 13px; color: #666; margin-bottom: 5px; font-weight: 500;}
+    .fin-box.highlight .fin-label { color: #05a044; font-weight: bold;}
+    .fin-val { font-size: 22px; font-weight: bold; color: var(--primary);}
+    .fin-box.highlight .fin-val { color: #06C755; font-size: 26px;}
+
+    /* 2. Flowchart Modal */
+    .ig-main-title { color: #d68a27; font-size: 24px; font-weight: bold; margin: 0 0 30px 0; }
+    .ig-flowchart { display: flex; justify-content: space-between; align-items: stretch; position: relative; padding-top: 15px;}
+    .ig-case-wrapper { display: flex; align-items: flex-start; gap: 10px; }
+    .ig-case-label { font-size: 15px; font-weight: bold; color: #d68a27; display: flex; align-items: center; gap: 5px; margin-top: 35px; white-space: nowrap;}
+    .ig-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 110px;}
+    .ig-circle { width: 100px; height: 100px; border-radius: 50%; border: 4px solid; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; background: #fff; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+    .ig-circle-badge { position: absolute; top: -14px; padding: 2px 14px; border-radius: 15px; font-size: 11px; font-weight: bold; color: #fff; line-height: 1.2; text-align: center;}
+    
+    .ig-c-yellow { border-color: #e5b920; } .ig-c-yellow .ig-circle-badge { background: #e5b920; }
+    .ig-c-green { border-color: #4eb682; } .ig-c-green .ig-circle-badge { background: #4eb682; }
+    .ig-c-blue { border-color: #3b8796; } .ig-c-blue .ig-circle-badge { background: #3b8796; }
+    .ig-c-orange { border-color: #d68a27; } .ig-c-orange .ig-circle-badge { background: #d68a27; }
+
+    .ig-txt-pay { font-size: 11px; color: #666; margin-bottom: -2px;}
+    .ig-txt-pct { font-size: 26px; font-weight: bold; color: #333; line-height: 1;}
+    .ig-txt-amt { font-size: 14px; font-weight: bold; color: var(--primary-dark); margin-top: 2px;}
+    .ig-step-desc { font-size: 11px; color: #666; line-height: 1.3;}
+    
+    .ig-arrow-box { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #d68a27; margin: 0 5px; margin-top: 25px;}
+    .ig-arrow-txt { font-size: 10px; color: #999; margin-bottom: -4px;}
+    .ig-arrow-icon { font-size: 20px; }
+    .ig-equal-icon { font-size: 32px; color: #3b8796; font-weight: bold; margin: 0 5px; margin-top: 30px;}
+    
+    .ig-divider-vertical { width: 1px; border-left: 1px dashed #d68a27; position: relative; align-self: stretch; margin: 0 10px;}
+    .ig-divider-text { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 10px 0; color: #d68a27; font-weight: bold; font-size: 16px;}
+
+    /* 3. Disease List Modal */
+    .list-content { max-width: 1100px; max-height: 90vh; overflow-y: auto; font-family: 'Sarabun', sans-serif;}
+    
+    /* --- CSS ส่วนที่เพิ่มใหม่สำหรับการ Capture ให้อยู่ในรูปแบบ PC --- */
+    .dl-action-bar { text-align: center; padding-top: 15px; border-top: 1px solid var(--border-color); }
+    .btn-capture { background: var(--line-green); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-family: 'Prompt', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(6, 199, 85, 0.2); transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;}
+    .btn-capture:hover { background: #05a044; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(6, 199, 85, 0.3);}
+    .btn-capture i { font-size: 18px; }
+
+    /* หุ้มพื้นที่สำหรับเลื่อนซ้ายขวาในมือถือ */
+    .capture-area-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: -30px; /* หักล้าง padding ของ .modal-content-custom */
+        padding: 30px;
+    }
+    
+    /* บังคับเนื้อหาด้านในให้เป็น PC Layout (กว้างขั้นต่ำ 1024px) */
+    .capture-area-inner {
+        min-width: 1024px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    /* Override พิเศษสำหรับ Flowchart Modal ให้ทำงานใน Capture Area */
+    @media (max-width: 1024px) {
+        .capture-area-inner .ig-flowchart { flex-direction: row !important; align-items: stretch !important; gap: 0 !important; }
+        .capture-area-inner .ig-divider-vertical { width: 1px !important; height: auto !important; border-top: none !important; border-left: 1px dashed #d68a27 !important; margin: 0 10px !important;}
+        .capture-area-inner .ig-divider-text { padding: 10px 0 !important; }
+    }
+    @media (max-width: 768px) {
+        .capture-area-inner .ig-case-wrapper { flex-direction: row !important; gap: 10px !important; align-items: flex-start !important; }
+        .capture-area-inner .ig-case-label { margin-top: 35px !important; align-self: auto !important;}
+        .capture-area-inner .ig-arrow-box { margin-top: 25px !important; }
+        .capture-area-inner .ig-arrow-icon { transform: rotate(0deg) !important; }
+        .capture-area-inner .ig-arrow-txt { display: block !important; }
+        .capture-area-inner .ig-equal-icon { margin-top: 30px !important; }
+    }
+
+    /* สไตล์ดั้งเดิมของรายชื่อโรค */
+    .dl-main-title { color: var(--brand-orange); font-size: 28px; font-weight: 700; margin: 0 0 15px 0; letter-spacing: 0.5px; }
+    .dl-top-section { display: flex; align-items: stretch; gap: 20px; margin-bottom: 5px; }
+    .dl-top-header { flex: 0 0 180px; }
+    .dl-section-title { color: var(--brand-orange-dark); font-size: 18px; font-weight: 700; margin: 0; line-height: 1.4; }
+    .dl-badge-red { background-color: var(--impact-red); color: #ffffff; font-size: 14px; font-weight: 700; padding: 3px 14px; border-radius: 20px; display: inline-block; box-shadow: 0 3px 6px rgba(211, 47, 47, 0.3); }
+    .dl-badge-orange { background-color: var(--brand-orange); color: #ffffff; font-size: 14px; font-weight: 700; padding: 3px 14px; border-radius: 20px; display: inline-block; box-shadow: 0 3px 6px rgba(232, 119, 34, 0.3); margin-top: 10px; }
+    .dl-bottom-header-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .dl-top-list { flex: 1; padding-right: 20px; display: flex; flex-direction: column; justify-content: center; }
+    .dl-top-image { flex: 0 0 320px; display: flex; justify-content: flex-end; align-items: center; }
+    .dl-top-image img { width: 100%; height: 170px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .dl-divider { border: 0; border-top: 2px dashed var(--brand-orange); margin: 20px 0; opacity: 0.6; }
+    .dl-bottom-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; flex-grow: 1; }
+    .dl-category-title { color: var(--brand-orange); font-weight: 700; font-size: 15px; margin: 15px 0 8px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+    .dl-category-title.no-mt { margin-top: 0; }
+    .dl-ul { list-style: none; padding: 0; margin: 0; }
+    .dl-li { margin-bottom: 6px; font-size: 13px; line-height: 1.4; display: flex; align-items: flex-start; }
+    .dl-num { font-weight: 700; width: 22px; flex-shrink: 0; }
+    a.dl-disease-link { color: var(--text-dark); text-decoration: none; cursor: pointer; transition: color 0.2s; }
+    a.dl-disease-link:hover { color: var(--brand-orange); text-decoration: underline; }
+
+    /* Override Media Queries พิเศษ: บังคับให้โครงสร้างใน capture-area ไม่พังเมื่อจอเล็ก */
+    @media (max-width: 850px) {
+        .capture-area-inner .dl-bottom-section { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    @media (max-width: 768px) {
+        .capture-area-inner .dl-top-section { flex-direction: row !important; align-items: stretch !important; }
+        .capture-area-inner .dl-top-header { flex: 0 0 180px !important; padding-right: 0 !important; }
+        .capture-area-inner .dl-top-list { padding-right: 20px !important; }
+        .capture-area-inner .dl-top-image { order: 0 !important; flex: 0 0 320px !important; }
+    }
+    @media (max-width: 600px) {
+        .capture-area-inner .dl-bottom-section { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    /* ---------------------------------------------------- */
+
+    /* 4. Disease Detail Modal */
+    .detail-content { max-width: 500px; font-family: 'Angsana New', 'Sarabun', sans-serif; border-top: 5px solid var(--primary); }
+    .detail-content .modal-title { font-size: 32px; color: var(--primary-dark); font-weight: bold; margin: 0 0 15px; line-height: 1;}
+    .detail-content .info-box { background-color: #f8fafc; border-left: 4px solid var(--primary); padding: 12px 15px; margin-bottom: 10px; border-radius: 0 8px 8px 0;}
+    .detail-content .info-box.light { background-color: var(--primary-light); }
+    .detail-content .info-box.impact { background-color: #fff5f5; border-left-color: var(--impact-red); }
+    .detail-content .info-label { font-weight: bold; color: var(--primary); font-size: 24px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;}
+    .detail-content .info-box.impact .info-label { color: var(--impact-red); }
+    .detail-content .info-text { font-size: 22px; line-height: 1.3; margin: 0; color: var(--text-dark);}
+
+    /* --- STICKY BAR FIX: แก้ไขบั๊กรูปล้นจอ --- */
+    .sticky-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); padding: 15px 0; transform: translateY(100%); transition: 0.4s; z-index: 1000; border-top: 2px solid var(--primary); }
+    .sticky-bar.show { transform: translateY(0); }
+    .sticky-content { max-width: 1100px; margin: auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .sticky-left { display: flex; align-items: center; gap: 15px; }
+    .sticky-avatar { width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex-shrink: 0; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transform: translateZ(0); }
+    .sticky-info h4 { margin: 0; font-size: 18px; }
+    .sticky-info p { margin: 0; font-size: 14px; color: var(--text-grey); }
+    .sticky-right { display: flex; align-items: center; gap: 20px; }
+    .sticky-price { font-size: 28px; font-weight: bold; color: var(--primary);}
+    .sticky-btn { background: var(--line-green); color: white; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-family: 'Prompt'; font-size: 16px; cursor: pointer; border: none;}
+
+    /* --- RESPONSIVE ให้อ่านง่าย --- */
+    @media (max-width: 850px) {
+        .ig-fullscreen-inner.is-fullscreen .fs-document-area {
+            min-width: 850px; 
+            padding-right: 20px;
+            padding-bottom: 20px;
+        }
+        .ig-fullscreen-inner.is-fullscreen .mobile-scrollable-chart { overflow-x: visible; }
+        .ig-fullscreen-inner.is-fullscreen .fin-summary-row { flex-direction: row; flex-wrap: nowrap; } 
+        .ig-fullscreen-inner.is-fullscreen .ig-flowchart { flex-direction: row; align-items: stretch; gap: 0;}
+        .ig-fullscreen-inner.is-fullscreen .ig-divider-vertical { width: 1px; height: auto; border-top: none; border-left: 1px dashed #d68a27; margin: 0 10px;}
+        .ig-fullscreen-inner.is-fullscreen .ig-divider-text { padding: 10px 0; }
+        .ig-fullscreen-inner.is-fullscreen .ig-case-wrapper { flex-direction: row; align-items: flex-start; gap: 10px;}
+        .ig-fullscreen-inner.is-fullscreen .ig-case-label { margin-top: 35px; align-self: auto; }
+        .ig-fullscreen-inner.is-fullscreen .ig-arrow-box { margin-top: 25px; }
+        .ig-fullscreen-inner.is-fullscreen .ig-arrow-icon { transform: rotate(0deg); }
+        .ig-fullscreen-inner.is-fullscreen .ig-arrow-txt { display: block; }
+        .ig-fullscreen-inner.is-fullscreen .ig-equal-icon { margin-top: 30px; }
+    }
+
+    @media (max-width: 1024px) {
+        .ig-flowchart { flex-direction: column; align-items: center; gap: 15px;}
+        .ig-divider-vertical { width: 100%; height: 1px; border-left: none; border-top: 1px dashed #d68a27; margin: 15px 0;}
+        .ig-divider-text { padding: 0 10px; }
+    }
+
+    @media (max-width: 768px) {
+        .ig-case-wrapper { flex-direction: column; gap: 10px; align-items: center; }
+        .ig-case-label { margin-top: 0; align-self: center;}
+        .ig-arrow-box { margin-top: 0; }
+        .ig-arrow-icon { transform: rotate(90deg); }
+        .ig-arrow-txt { display: none; }
+        .ig-equal-icon { margin-top: 0; }
+        
+        /* ให้กล่องด้านล่างพับในจอมือถือ (เวลาไม่ Fullscreen) */
+        .fin-summary-row { flex-direction: row; flex-wrap: wrap; gap: 10px;}
+        .fin-box { flex: 1 1 45%; } 
+        .fin-box.highlight { flex: 1 1 100%; }
+    }
+
+    @media (max-width: 600px) {
+        .modal-content-custom { padding: 20px; }
+        .mat-title { font-size: 20px; line-height: 1.3;}
+        .ig-main-title { font-size: 22px; text-align: center; line-height: 1.4;}
+        .dl-main-title { font-size: 22px; text-align: center; line-height: 1.4;}
+
+        .sticky-content { padding: 0 15px; }
+        .sticky-avatar { display: none; }
+        .sticky-info h4 { font-size: 14px; }
+        .sticky-price { font-size: 20px; }
+        .sticky-btn { padding: 10px 15px; font-size: 14px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="main-banner">
+    <img src="image.webp" alt="แผนประกันเงินออม + 50 โรคร้ายแรง" onerror="this.src='https://via.placeholder.com/1100x400/e86614/fff.png?text=Savings+Plus+50CI';">
+</div>
+
+<div class="container-scroll-wrapper">
+    <div class="container">
+        
+            <div class="left-panel">
+            <div class="input-card">
+                <h2>คำนวณแพ็กเกจประกัน</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>เพศ</label>
+                        <div class="gender-select">
+                            <button class="gender-btn active" id="btn-male" onclick="setGender('male')">👨 ชาย</button>
+                            <button class="gender-btn" id="btn-female" onclick="setGender('female')">👩 หญิง</button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 0.6;">
+                        <label>อายุ (ปี)</label>
+                        <input type="number" id="age-input" value="30" min="16" max="65" oninput="calculate()">
+                    </div>
+                </div>
+
+                <div class="sum-insured-box">
+                    <label>เลือกแผนสำเร็จรูป หรือ ปรับแต่งเอง</label>
+                    <div class="plan-options">
+                        <div class="plan-opt-btn" id="plan-1" onclick="selectPlan(1)"><span class="plan-tag">แผน S</span><div class="plan-name">1.2 ล้าน</div><div class="plan-desc">เงินออม 2 แสน<br>50 โรคร้าย 1 ล้าน</div></div>
+                        <div class="plan-opt-btn active" id="plan-2" onclick="selectPlan(2)"><span class="plan-tag">แผน M</span><div class="pop-badge">ขายดี</div><div class="plan-name">2.2 ล้าน</div><div class="plan-desc">เงินออม 2 แสน<br>50 โรคร้าย 2 ล้าน</div></div>
+                        <div class="plan-opt-btn" id="plan-3" onclick="selectPlan(3)"><span class="plan-tag">แผน L</span><div class="plan-name">3.2 ล้าน</div><div class="plan-desc">เงินออม 2 แสน<br>50 โรคร้าย 3 ล้าน</div></div>
+                        <div class="plan-opt-btn" id="plan-4" onclick="selectPlan(4)"><span class="plan-tag">แผน XL</span><div class="plan-name">5.2 ล้าน</div><div class="plan-desc">เงินออม 2 แสน<br>50 โรคร้าย 5 ล้าน</div></div>
+                        <div class="plan-opt-btn full-width" id="plan-5" onclick="selectPlan(5)"><span class="plan-tag">แผน XXL</span><div class="plan-name">10.2 ล้าน</div><div class="plan-desc">เงินออม 2 แสน<br>50 โรคร้าย 10 ล้าน</div></div>
+                    </div>
+
+                    <div class="custom-sliders-box">
+                        <div class="slider-group">
+                            <div class="slider-header"><span class="slider-label">1. ทุนประกันชีวิตหลัก</span><div class="slider-input-wrapper"><input type="text" id="main-display-input" onchange="handleMainManualInput(this.value)"></div></div>
+                            <input type="range" id="main-slider" min="200000" max="10000000" step="100000" oninput="handleMainSlider(this.value)">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header"><span class="slider-label">2. ทุนประกัน 50 โรคร้ายแรง</span><div class="slider-input-wrapper"><input type="text" id="ci-display-input" onchange="handleCIManualInput(this.value)"></div></div>
+                            <input type="range" id="ci-slider" min="500000" max="10000000" step="100000" oninput="handleCISlider(this.value)">
+                        </div>
+                    </div>
+                    <div id="sum-error" class="error-msg"></div>
+                </div>
+
+                <div class="requirements">
+                    <h3><i class="fa-solid fa-shield-halved"></i> จุดเด่นแพ็กเกจ</h3>
+                    <ul class="req-list">
+                        <li><i class="fa-solid fa-check"></i> เสียชีวิตทุกกรณี รวมอุบัติเหตุ</li>
+                        <li><i class="fa-solid fa-check"></i> เงินออมเพื่อครอบครัว (เบี้ยคงที่)</li>
+                        <li><i class="fa-solid fa-check"></i> คุ้มครองครอบคลุม 50 โรคร้ายแรง (เบี้ยปรับทุกปี)</li>
+                        <li><i class="fa-solid fa-check"></i> จ่ายเงินก้อนทันทีเมื่อตรวจพบ</li>
+                        <li><i class="fa-solid fa-check"></i> ลดหย่อนภาษีได้สูงสุด 100,000 บาท</li>
+                    </ul>
+                </div>
+            </div>
+
+                    <div class="agent-card-left">
+                <img src="agent.jpg" alt="ตัวแทน MDRT" class="agent-profile-img" onerror="this.src='https://via.placeholder.com/90/e86614/fff.png?text=Agent';">
+                <div class="agent-info">
+                    <h4>รามาวดี ศรแก้ว <span style="font-weight: 400; font-size:12px;">(ตัวแทน MDRT)</span></h4>
+                    <p>ใบอนุญาตตัวแทน : 6501013843</p>
+                    <p style="color: var(--primary); white-space: nowrap; font-size: 13.5px;">ประสบการณ์อายุงาน <span id="experience-text"></span></p>
+                    <a href="tel:0982857504" class="phone"><i class="fa fa-phone"></i> 098-285-7504</a>
+                </div>
+            </div>
+        </div>
+
+            <div class="right-panel">
+            <div class="header-right"><h2>สรุปแผนความคุ้มครอง</h2></div>
+
+            <div class="plan-card">
+                <div class="plan-header">
+                    <div class="plan-title">
+                        <h3>แผนประกันเงินออม + 50 โรคร้ายแรง</h3>
+                        <p id="display-plan-sub">แผนคุ้มครองรวม 2.2 ล้านบาท</p>
+                    </div>
+                    <div class="plan-price-display">
+                        <div style="font-size:13px; color:#666;">เบี้ยรวมต่อปี</div>
+                        <span class="price-amount" id="total-price">-</span> <span style="font-size: 15px;">บาท</span>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="detail-row"><span>1. สัญญาหลัก เงินออม (ตลอดชีพ)</span><span class="detail-val" id="main-price">-</span></div>
+                    <div class="breakdown-row">ทุนประกัน <span id="display-main-sum">200,000</span> บาท</div>
+                    <div class="detail-row" style="margin-top:10px;"><span>2. ประกัน 50 โรคร้ายแรง</span><span class="detail-val" id="ci-price">-</span></div>
+                    <div class="breakdown-row" style="margin-bottom: 0;">ทุนประกัน <span id="display-ci-sum">2,000,000</span> บาท</div>
+                </div>
+            </div>
+
+            <div class="coverage-table-container">
+                <div class="coverage-table-header">ตารางความคุ้มครอง (หน่วย: บาท)</div>
+                <table class="coverage-table">
+                    <tr class="table-section-1"><td colspan="2">1. ผลประโยชน์โรคร้ายแรง</td></tr>
+                    <tr><td><strong>1.1 ระยะเริ่มต้น (Early Stage) 5 โรค</strong></td><td id="tbl-early-stage" style="font-weight: 600; color: var(--primary);">-</td></tr>
+                    <tr style="background:#fafafa;"><td colspan="2"><strong>1.2 ระยะรุนแรง (Last Stage) 45 โรค</strong></td></tr>
+                    <tr style="background:#fafafa;"><td class="td-bullet">• กรณี<span class="td-highlight-text">ยังไม่มี</span>การจ่ายระยะเริ่มต้น</td><td id="tbl-last-stage-1" style="font-weight: 600;">-</td></tr>
+                    <tr style="background:#fafafa;"><td class="td-bullet">• กรณี<span class="td-highlight-text">มีการจ่าย</span>ระยะเริ่มต้นแล้ว</td><td id="tbl-last-stage-2" style="font-weight: 600;">-</td></tr>
+                    
+                    <tr class="table-section-2"><td colspan="2">2. ผลประโยชน์เสียชีวิต</td></tr>
+                    <tr><td class="td-bullet">• กรณี<span class="td-highlight-text">ยังไม่มี</span>การจ่ายโรคร้ายระยะเริ่มต้น</td><td id="tbl-death-1" style="font-weight: 600;">-</td></tr>
+                    <tr><td class="td-bullet">• กรณี<span class="td-highlight-text">มีการจ่าย</span>โรคร้ายระยะเริ่มต้นแล้ว</td><td id="tbl-death-2" style="font-weight: 600;">-</td></tr>
+                    <tr><td class="td-bullet">• กรณี<span class="td-highlight-text">มีการจ่าย</span>โรคร้ายระยะรุนแรงแล้ว</td><td id="tbl-death-3" style="font-weight: 600;">-</td></tr>
+
+                    <tr class="table-section-3"><td colspan="2">3. ผลประโยชน์กรณีมีชีวิตอยู่</td></tr>
+                    <tr><td style="padding-left: 20px;">กรณีมีชีวิตอยู่ครบกำหนดสัญญา</td><td id="tbl-maturity" style="font-weight: 600;">-</td></tr>
+                </table>
+            </div>
+
+                    <div class="action-buttons-wrapper">
+                
+                            <a href="javascript:void(0)" onclick="openMaturityModal()" class="btn-style btn-maturity">
+                    <div class="brochure-icon"><i class="fa-solid fa-piggy-bank"></i></div>
+                    <div class="brochure-text">
+                        <h4>ผลประโยชน์เงินคืนเมื่อครบสัญญาอายุ 90 ปี</h4>
+                        <p>เฉพาะระยะเวลาการชำระเบี้ยประกัน 20 ปีเท่านั้น</p>
+                    </div>
+                    <div class="brochure-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+
+                            <a href="javascript:void(0)" onclick="openDiseaseListModal()" class="btn-style btn-disease">
+                    <div class="brochure-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                    <div class="brochure-text">
+                        <h4>รายชื่อ 50 โรคร้ายแรง</h4>
+                        <p>คลิกเพื่อดูรายละเอียดโรคที่คุ้มครองทั้งหมด</p>
+                    </div>
+                    <div class="brochure-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+
+                            <a href="javascript:void(0)" onclick="openFlowchartModal()" class="btn-style btn-flowchart">
+                    <div class="brochure-icon"><i class="fa-solid fa-sitemap"></i></div>
+                    <div class="brochure-text">
+                        <h4>การจ่ายผลประโยชน์ 50 โรคร้ายแรง</h4>
+                        <p>คลิกเพื่อดูรูปแบบการจ่ายเงินกรณีตรวจพบโรคร้ายแรง</p>
+                    </div>
+                    <div class="brochure-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+
+                            <a href="https://www.fwd.co.th/files/v3/assets/blt331c1aa12dcfd37a/blt2ccd182411340333/6944b25cca96fcd9c52ee6f0/TH_Brochure_CI50_Omne.pdf" target="_blank" class="btn-style btn-pdf">
+                    <div class="brochure-icon"><i class="fa-solid fa-download"></i></div>
+                    <div class="brochure-text">
+                        <h4>ดาวน์โหลดโบรชัวร์ (PDF)</h4>
+                        <p>อ่านรายละเอียดแผนประกัน CI50 เพิ่มเติม</p>
+                    </div>
+                    <div class="brochure-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sticky-bar" id="sticky-bar">
+    <div class="sticky-content">
+        <div class="sticky-left">
+            <div class="sticky-avatar"><img id="sticky-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar" style="width:100%; height:100%; object-fit:cover;"></div>
+            <div class="sticky-info">
+                <h4>เงินออม + <span style="color: var(--primary);">50 โรคร้ายแรง</span></h4>
+                <p><span id="sticky-gender-text">ชาย</span>, <span id="sticky-age-text">30</span> ปี | <span id="sticky-plan-text">แผน 2.2M</span></p>
+            </div>
+        </div>
+        <div class="sticky-right">
+            <div class="sticky-price"><span id="sticky-price-amount">0</span> <span style="font-size:16px; font-weight:400; color:var(--text-dark);">บาท/ปี</span></div>
+            <button class="sticky-btn" onclick="sendToLine()">ส่งข้อมูล</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay-custom" id="maturityModal">
+    <div class="modal-content-custom mat-content" style="padding:0; background:transparent; box-shadow:none;">
+        <div class="ig-fullscreen-inner" id="matContentInner">
+            <span class="close-info-btn" onclick="closeMaturityModal()">&times;</span>
+            
+            <div class="fs-toggle-btn" onclick="toggleMatFullscreen()">
+                <i class="fa-solid fa-expand" id="matFsIcon"></i> <span id="matFsText">ดูเต็มจอ / เลื่อนดู</span>
+            </div>
+            
+            <div class="fs-document-area">
+                <h2 class="mat-title" style="margin-top:25px;">ผลประโยชน์และความคุ้มครองชีวิต</h2>
+                <p class="mat-subtitle">แผนความคุ้มครองชีวิต 90/20 (ชำระเบี้ย 20 ปี)</p>
+            
+                <div class="bar-chart-wrapper">
+                    <div class="mobile-scrollable-chart">
+                        <div style="display: flex; align-items: flex-end; min-width: 650px;">
+                                    <div class="y-axis-label">ความคุ้มครองชีวิต<br><span class="y-axis-sub">(% ทุนประกันภัย)</span></div>
+                    
+                                    <div style="flex: 1;">
+                                        <div class="chart-bar-container">
+                                            <div class="chart-bar">
+                                                <div class="bar-txt-pct">100%</div>
+                                                <div class="bar-txt-amt">คุ้มครอง <span id="mat-cov-val">200,000</span></div>
+                                            </div>
+                                        </div>
+                        
+                                        <div class="x-axis-line">
+                                            <div class="x-node node-start">1</div>
+                                            <div class="x-node node-mid">20</div>
+                                            <div class="x-node node-end">90</div>
+                                        </div>
+                                        <div class="x-labels">
+                                            <div class="x-lbl lbl-start">ปีกรมธรรม์</div>
+                                            <div class="x-lbl lbl-mid">ชำระเบี้ยครบ</div>
+                                            <div class="x-lbl lbl-end">อายุ 90 ปี<br>(ครบสัญญา)</div>
+                            
+                                            <div class="premium-period"><span>ระยะเวลาชำระเบี้ย 20 ปี</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+
+                <div class="fin-summary-row">
+                    <div class="fin-box">
+                        <div class="fin-label"><i class="fa-solid fa-coins"></i> จำนวนเบี้ยสัญญาหลัก ปีละ</div>
+                        <div class="fin-val" id="mat-annual-premium">-</div>
+                    </div>
+                    <div class="fin-box">
+                        <div class="fin-label"><i class="fa-solid fa-sack-dollar"></i> จำนวนเบี้ยที่ส่งไปทั้งหมด</div>
+                        <div class="fin-val" id="mat-total-premium">-</div>
+                    </div>
+                    <div class="fin-box highlight">
+                        <div class="fin-label"><i class="fa-solid fa-hand-holding-dollar"></i> รับเงินคืนก้อนโต (ปีสุดท้าย)</div>
+                        <div class="fin-val" id="mat-return-val">-</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; font-size: 13px; color: #888;">
+                    * ความคุ้มครองชีวิต 100% ของทุนประกัน หรือ เบี้ยประกันภัยที่ได้รับชำระมาแล้ว แล้วแต่จำนวนใดมากกว่า<br>
+                    * เงินคืนเมื่ออายุครบ 90 ปี รับ 100% ของทุนประกัน
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay-custom" id="flowchartModal">
+    <div class="modal-content-custom flowchart-content" style="padding:0; background:transparent; box-shadow:none;">
+        <div class="ig-fullscreen-inner" id="flowContentInner" style="padding-bottom: 20px;">
+            <span class="close-info-btn" onclick="closeFlowchartModal()">&times;</span>
+            
+            <div class="fs-toggle-btn" onclick="toggleFlowFullscreen()">
+                <i class="fa-solid fa-expand" id="flowFsIcon"></i> <span id="flowFsText">ดูเต็มจอ / เลื่อนดู</span>
+            </div>
+            
+            <div class="fs-document-area">
+                <div class="capture-area-wrapper">
+                    <div class="capture-area-inner" id="capture-area-flow" style="min-width: 800px; padding: 20px 10px; background: #fdfaf6;">
+                        <h2 class="ig-main-title" style="margin-top:25px;">
+                            การจ่ายผลประโยชน์ <span id="ig-dynamic-sum" style="color: var(--primary);">2,000,000</span>
+                        </h2>
+                         
+                        <div class="ig-flowchart">
+                            <div class="ig-case-wrapper">
+                                <div class="ig-case-label">กรณีที่ 1 <i class="fa-solid fa-arrow-right" style="font-size:14px;"></i></div>
+                             
+                                <div class="ig-step">
+                                    <div class="ig-circle ig-c-yellow">
+                                        <div class="ig-circle-badge">ระยะ<br>เริ่มต้น</div>
+                                        <div class="ig-txt-pay">จ่าย</div>
+                                        <div class="ig-txt-pct">20%</div>
+                                        <div class="ig-txt-amt" id="flow-early">400,000</div>
+                                    </div>
+                                    <div class="ig-step-desc">เมื่อวินิจฉัยพบ<br>1 ใน 5 โรคร้ายแรง</div>
+                                </div>
+
+                                <div class="ig-arrow-box">
+                                    <div class="ig-arrow-txt">ต่อมา</div>
+                                    <i class="fa-solid fa-arrow-right ig-arrow-icon"></i>
+                                </div>
+
+                                <div class="ig-step">
+                                    <div class="ig-circle ig-c-green">
+                                        <div class="ig-circle-badge">ระยะ<br>รุนแรง</div>
+                                        <div class="ig-txt-pay">จ่าย</div>
+                                        <div class="ig-txt-pct">80%</div>
+                                        <div class="ig-txt-amt" id="flow-last80">1,600,000</div>
+                                    </div>
+                                    <div class="ig-step-desc">เมื่อวินิจฉัยพบ<br>1 ใน 45 โรคร้ายแรง<br>หรือเสียชีวิต</div>
+                                </div>
+
+                                <div class="ig-equal-icon">=</div>
+
+                                <div class="ig-step">
+                                    <div class="ig-circle ig-c-blue">
+                                        <div class="ig-circle-badge" style="top:-10px;">รวมผล<br>ประโยชน์</div>
+                                        <div class="ig-txt-pct" style="margin-top:10px;">100%</div>
+                                        <div class="ig-txt-amt" id="flow-total100-1">2,000,000</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ig-divider-vertical"><div class="ig-divider-text">หรือ</div></div>
+
+                            <div class="ig-case-wrapper">
+                                <div class="ig-case-label">กรณีที่ 2 <i class="fa-solid fa-arrow-right" style="font-size:14px;"></i></div>
+                             
+                                <div class="ig-step">
+                                    <div class="ig-circle ig-c-orange">
+                                        <div class="ig-circle-badge" style="top:-10px;">ระยะ<br>รุนแรง</div>
+                                        <div class="ig-txt-pay">จ่าย</div>
+                                        <div class="ig-txt-pct">100%</div>
+                                        <div class="ig-txt-amt" id="flow-total100-2">2,000,000</div>
+                                    </div>
+                                    <div class="ig-step-desc">เมื่อวินิจฉัยพบ 1 ใน 45<br>โรคร้ายแรงหรือเสียชีวิต</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dl-action-bar" style="border-top: none; padding-top: 10px;">
+                    <button class="btn-capture" id="share-btn-flow" onclick="captureAndShare('capture-area-flow', 'share-btn-flow', 'การจ่ายผลประโยชน์50CI.png')">
+                        <i class="fa-solid fa-camera"></i> บันทึก / แชร์ภาพ
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay-custom" id="diseaseListModal">
+    <div class="modal-content-custom list-content">
+        <span class="close-info-btn" onclick="closeDiseaseListModal()">&times;</span>
+        
+        <div class="capture-area-wrapper">
+            <div class="capture-area-inner" id="capture-area-list">
+                <h1 class="dl-main-title">รายชื่อโรคที่คุ้มครอง 50 โรคร้ายแรง</h1>
+
+                <div class="dl-top-section">
+                    <div class="dl-top-header">
+                        <h2 class="dl-section-title">ระยะเริ่มต้น<br>(Early Stage)</h2>
+                        <span class="dl-badge-orange">5 โรคร้ายแรง</span>
+                    </div>
+                    <div class="dl-top-list">
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">1.</span><a class="dl-disease-link" onclick="openDiseaseModal('e1')">โรคมะเร็งระยะไม่ลุกลาม</a></li>
+                            <li class="dl-li"><span class="dl-num">2.</span><a class="dl-disease-link" onclick="openDiseaseModal('e2')">โรคหลอดเลือดหัวใจตีบที่รักษาด้วยการสวนหลอดเลือดหัวใจ</a></li>
+                            <li class="dl-li"><span class="dl-num">3.</span><a class="dl-disease-link" onclick="openDiseaseModal('e3')">โรคหลอดเลือดสมองที่ต้องได้รับการผ่าตัดลอกหลอดเลือดแดงคาโรติด</a></li>
+                            <li class="dl-li"><span class="dl-num">4.</span><a class="dl-disease-link" onclick="openDiseaseModal('e4')">โรคหลอดเลือดสมองโป่งพองที่รักษาโดยใช้ขดลวดผ่านสายสวนทางหลอดเลือด</a></li>
+                            <li class="dl-li"><span class="dl-num">5.</span><a class="dl-disease-link" onclick="openDiseaseModal('e5')">โรคหลอดเลือดสมองที่ได้รับการรักษาโดยวิธีใส่สายสวนเส้นเลือดแดงบริเวณคอ</a></li>
+                        </ul>
+                    </div>
+                    <div class="dl-top-image">
+                        <img src="cancer2.jpg" alt="การดูแลผู้ป่วย" onerror="this.src='https://via.placeholder.com/320x170/e86614/fff.png?text=FWD';">
+                    </div>
+                </div>
+
+                <hr class="dl-divider">
+
+                <div class="dl-bottom-section">
+                    <div>
+                        <div class="dl-bottom-header-wrapper">
+                            <h2 class="dl-section-title">ระยะรุนแรง (Last Stage)</h2>
+                            <span class="dl-badge-red">45 โรคร้ายแรง</span>
+                        </div>
+
+                        <div class="dl-category-title">โรคเกี่ยวกับมะเร็ง</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">1.</span><a class="dl-disease-link" onclick="openDiseaseModal('l1')">โรคมะเร็งระยะลุกลาม</a></li>
+                        </ul>
+
+                        <div class="dl-category-title">โรคเกี่ยวกับหัวใจและหลอดเลือด</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">2.</span><a class="dl-disease-link" onclick="openDiseaseModal('l2')">โรคกล้ามเนื้อหัวใจตายเฉียบพลันจากการขาดเลือด</a></li>
+                            <li class="dl-li"><span class="dl-num">3.</span><a class="dl-disease-link" onclick="openDiseaseModal('l3')">การผ่าตัดเส้นเลือดเลี้ยงกล้ามเนื้อหัวใจ</a></li>
+                            <li class="dl-li"><span class="dl-num">4.</span><a class="dl-disease-link" onclick="openDiseaseModal('l4')">การผ่าตัดลิ้นหัวใจโดยวิธีการเปิดหัวใจ</a></li>
+                            <li class="dl-li"><span class="dl-num">5.</span><a class="dl-disease-link" onclick="openDiseaseModal('l5')">การผ่าตัดเส้นเลือดแดงใหญ่ เอออร์ต้า</a></li>
+                            <li class="dl-li"><span class="dl-num">6.</span><a class="dl-disease-link" onclick="openDiseaseModal('l6')">โรคกล้ามเนื้อหัวใจ</a></li>
+                            <li class="dl-li"><span class="dl-num">7.</span><a class="dl-disease-link" onclick="openDiseaseModal('l7')">โรคเส้นเลือดหัวใจตีบ</a></li>
+                        </ul>
+
+                        <div class="dl-category-title">โรคเกี่ยวกับกล้ามเนื้อ กระดูกและข้อ</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">8.</span><a class="dl-disease-link" onclick="openDiseaseModal('l8')">ภาวะข้ออักเสบรูมาตอยด์ชนิดรุนแรง</a></li>
+                            <li class="dl-li"><span class="dl-num">9.</span><a class="dl-disease-link" onclick="openDiseaseModal('l9')">โรคกล้ามเนื้ออักเสบ</a></li>
+                            <li class="dl-li"><span class="dl-num">10.</span><a class="dl-disease-link" onclick="openDiseaseModal('l10')">การผ่าตัดกระดูกสันหลังคดที่ไม่ทราบสาเหตุ</a></li>
+                        </ul>
+
+                        <div class="dl-category-title">โรคเกี่ยวกับระบบประสาทและสมอง</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">11.</span><a class="dl-disease-link" onclick="openDiseaseModal('l11')">โรคหลอดเลือดสมองแตกหรืออุดตัน</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <ul class="dl-ul" style="margin-top: 5px;">
+                            <li class="dl-li"><span class="dl-num">12.</span><a class="dl-disease-link" onclick="openDiseaseModal('l12')">เนื้องอกในสมองชนิดที่ไม่ใช่มะเร็ง</a></li>
+                            <li class="dl-li"><span class="dl-num">13.</span><a class="dl-disease-link" onclick="openDiseaseModal('l13')">สมองอักเสบจากเชื้อไวรัส</a></li>
+                            <li class="dl-li"><span class="dl-num">14.</span><a class="dl-disease-link" onclick="openDiseaseModal('l14')">โรคเยื่อหุ้มสมองและไขสันหลังอักเสบจากเชื้อแบคทีเรีย</a></li>
+                            <li class="dl-li"><span class="dl-num">15.</span><a class="dl-disease-link" onclick="openDiseaseModal('l15')">โรคของเซลล์ประสาทควบคุมการเคลื่อนไหว</a></li>
+                            <li class="dl-li"><span class="dl-num">16.</span><a class="dl-disease-link" onclick="openDiseaseModal('l16')">โรคสมองเสื่อมชนิดอัลไซเมอร์</a></li>
+                            <li class="dl-li"><span class="dl-num">17.</span><a class="dl-disease-link" onclick="openDiseaseModal('l17')">โรคพาร์กินสัน</a></li>
+                            <li class="dl-li"><span class="dl-num">18.</span><a class="dl-disease-link" onclick="openDiseaseModal('l18')">โรคหลอดเลือดสมองโป่งพองที่ต้องรักษาโดยการผ่าตัด</a></li>
+                            <li class="dl-li"><span class="dl-num">19.</span><a class="dl-disease-link" onclick="openDiseaseModal('l19')">โรคระบบประสาทมัลติเพิล สเคลอโรสิส</a></li>
+                        </ul>
+
+                        <div class="dl-category-title">โรคเกี่ยวกับอวัยวะสำคัญ</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">20.</span><a class="dl-disease-link" onclick="openDiseaseModal('l20')">การผ่าตัดเปลี่ยนอวัยวะหรือปลูกถ่ายไขกระดูก</a></li>
+                            <li class="dl-li"><span class="dl-num">21.</span><a class="dl-disease-link" onclick="openDiseaseModal('l21')">ไตวายเรื้อรัง</a></li>
+                            <li class="dl-li"><span class="dl-num">22.</span><a class="dl-disease-link" onclick="openDiseaseModal('l22')">ตับวาย</a></li>
+                            <li class="dl-li"><span class="dl-num">23.</span><a class="dl-disease-link" onclick="openDiseaseModal('l23')">โรคหลอดลมปอดอุดกั้นเรื้อรังขั้นรุนแรง / โรคปอดระยะสุดท้าย</a></li>
+                            <li class="dl-li"><span class="dl-num">24.</span><a class="dl-disease-link" onclick="openDiseaseModal('l24')">โรคไวรัสตับอักเสบขั้นรุนแรง</a></li>
+                            <li class="dl-li"><span class="dl-num">25.</span><a class="dl-disease-link" onclick="openDiseaseModal('l25')">ลูปัส จากโรคซิสเต็มมิค ลูปัส อีริเธมาโตซูส</a></li>
+                            <li class="dl-li"><span class="dl-num">26.</span><a class="dl-disease-link" onclick="openDiseaseModal('l26')">ภาวะตับอ่อนอักเสบที่กลับเป็นซ้ำและเรื้อรัง</a></li>
+                            <li class="dl-li"><span class="dl-num">27.</span><a class="dl-disease-link" onclick="openDiseaseModal('l27')">โรคถุงน้ำในไต</a></li>
+                            <li class="dl-li"><span class="dl-num">28.</span><a class="dl-disease-link" onclick="openDiseaseModal('l28')">โรคลำไส้อักเสบเป็นแผลรุนแรง</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <div class="dl-category-title no-mt">อื่นๆ</div>
+                        <ul class="dl-ul">
+                            <li class="dl-li"><span class="dl-num">29.</span><a class="dl-disease-link" onclick="openDiseaseModal('l29')">การสูญเสียการได้ยิน</a></li>
+                            <li class="dl-li"><span class="dl-num">30.</span><a class="dl-disease-link" onclick="openDiseaseModal('l30')">การสูญเสียความสามารถในการพูด</a></li>
+                            <li class="dl-li"><span class="dl-num">31.</span><a class="dl-disease-link" onclick="openDiseaseModal('l31')">แผลไหม้ฉกรรจ์</a></li>
+                            <li class="dl-li"><span class="dl-num">32.</span><a class="dl-disease-link" onclick="openDiseaseModal('l32')">อัมพาตของกล้ามเนื้อแขนหรือขา</a></li>
+                            <li class="dl-li"><span class="dl-num">33.</span><a class="dl-disease-link" onclick="openDiseaseModal('l33')">โรคโปลิโอ</a></li>
+                            <li class="dl-li"><span class="dl-num">34.</span><a class="dl-disease-link" onclick="openDiseaseModal('l34')">การสูญเสียการดำรงชีพอย่างอิสระ</a></li>
+                            <li class="dl-li"><span class="dl-num">35.</span><a class="dl-disease-link" onclick="openDiseaseModal('l35')">ตาบอด</a></li>
+                            <li class="dl-li"><span class="dl-num">36.</span><a class="dl-disease-link" onclick="openDiseaseModal('l36')">การฉีกขาดของรากประสาทต้นแขน</a></li>
+                            <li class="dl-li"><span class="dl-num">37.</span><a class="dl-disease-link" onclick="openDiseaseModal('l37')">โรคหนังแข็งชนิดลุกลาม</a></li>
+                            <li class="dl-li"><span class="dl-num">38.</span><a class="dl-disease-link" onclick="openDiseaseModal('l38')">โรคเท้าช้าง</a></li>
+                            <li class="dl-li"><span class="dl-num">39.</span><a class="dl-disease-link" onclick="openDiseaseModal('l39')">การทุพพลภาพถาวรสิ้นเชิง (ก่อนอายุ 70 ปี)</a></li>
+                            <li class="dl-li"><span class="dl-num">40.</span><a class="dl-disease-link" onclick="openDiseaseModal('l40')">โรคโลหิตจางจากไขกระดูกไม่สร้างเม็ดโลหิต</a></li>
+                            <li class="dl-li"><span class="dl-num">41.</span><a class="dl-disease-link" onclick="openDiseaseModal('l41')">โรคเนื้อเยื่อพังผืดอักเสบติดเชื้อและเป็นเนื้อตาย</a></li>
+                            <li class="dl-li"><span class="dl-num">42.</span><a class="dl-disease-link" onclick="openDiseaseModal('l42')">โรคแรงดันในหลอดเลือดแดงปอดสูงแบบปฐมภูมิ</a></li>
+                            <li class="dl-li"><span class="dl-num">43.</span><a class="dl-disease-link" onclick="openDiseaseModal('l43')">ภาวะโคม่า</a></li>
+                            <li class="dl-li"><span class="dl-num">44.</span><a class="dl-disease-link" onclick="openDiseaseModal('l44')">การบาดเจ็บที่ศีรษะอย่างรุนแรง</a></li>
+                            <li class="dl-li"><span class="dl-num">45.</span><a class="dl-disease-link" onclick="openDiseaseModal('l45')">ภาวะอะแพลลิก</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dl-action-bar">
+            <button class="btn-capture" id="share-btn-list" onclick="captureAndShare('capture-area-list', 'share-btn-list', 'รายชื่อ50โรคร้ายแรง.png')">
+                <i class="fa-solid fa-camera"></i> บันทึก / แชร์ภาพ
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay-custom" id="diseaseDetailModal" style="z-index: 3000;">
+    <div class="modal-content-custom detail-content">
+        <span class="close-info-btn" onclick="closeDiseaseModal()">&times;</span>
+        <h3 class="modal-title" id="modalTitle">ชื่อโรค</h3>
+        <div class="info-box"><div class="info-label"><i class="fa-solid fa-circle-info"></i> คืออะไร</div><p class="info-text" id="modalDesc"></p></div>
+        <div class="info-box light"><div class="info-label"><i class="fa-solid fa-virus"></i> สาเหตุ</div><p class="info-text" id="modalCause"></p></div>
+        <div class="info-box"><div class="info-label"><i class="fa-solid fa-stethoscope"></i> อาการที่พบ</div><p class="info-text" id="modalSymptom"></p></div>
+        <div class="info-box light"><div class="info-label"><i class="fa-solid fa-pills"></i> วิธีรักษา</div><p class="info-text" id="modalTreatment"></p></div>
+        <div class="info-box impact"><div class="info-label"><i class="fa-solid fa-triangle-exclamation"></i> สรุปผลกระทบ</div><p class="info-text" id="modalImpact"></p></div>
+    </div>
+</div>
+
+<script>
+    // ตารางเรทเบี้ยประกัน
+    const rateTableMain = {
+        16:{male:1710,female:1330}, 17:{male:1750,female:1380}, 18:{male:1790,female:1410}, 19:{male:1830,female:1460}, 20:{male:1870,female:1490},
+        21:{male:1930,female:1530}, 22:{male:1980,female:1570}, 23:{male:2040,female:1610}, 24:{male:2040,female:1650}, 25:{male:2090,female:1710},
+        26:{male:2150,female:1750}, 27:{male:2200,female:1780}, 28:{male:2260,female:1830}, 29:{male:2310,female:1880}, 30:{male:2370,female:1940},
+        31:{male:2420,female:1990}, 32:{male:2480,female:2060}, 33:{male:2530,female:2110}, 34:{male:2590,female:2180}, 35:{male:2640,female:2230},
+        36:{male:2750,female:2310}, 37:{male:2810,female:2380}, 38:{male:2860,female:2450}, 39:{male:2920,female:2520}, 40:{male:3000,female:2600},
+        41:{male:3080,female:2670}, 42:{male:3190,female:2730}, 43:{male:3300,female:2840}, 44:{male:3410,female:2920}, 45:{male:3470,female:3000},
+        46:{male:3580,female:3080}, 47:{male:3690,female:3190}, 48:{male:3800,female:3280}, 49:{male:3910,female:3390}, 50:{male:4020,female:3490},
+        51:{male:4130,female:3590}, 52:{male:4290,female:3740}, 53:{male:4400,female:3840}, 54:{male:4620,female:4020}, 55:{male:4730,female:4180},
+        56:{male:4950,female:4350}, 57:{male:5170,female:4510}, 58:{male:5340,female:4680}, 59:{male:5500,female:4840}, 60:{male:5720,female:5010},
+        61:{male:5940,female:5170}, 62:{male:6220,female:5390}, 63:{male:6440,female:5560}, 64:{male:6710,female:5780}, 65:{male:6990,female:6000}
+    };
+    const rateTableCI = {
+        16:{male:164,female:120}, 17:{male:176,female:118}, 18:{male:183,female:114}, 19:{male:188,female:110}, 20:{male:188,female:108},
+        21:{male:194,female:108}, 22:{male:197,female:112}, 23:{male:202,female:117}, 24:{male:208,female:124}, 25:{male:214,female:133},
+        26:{male:217,female:140}, 27:{male:225,female:151}, 28:{male:232,female:162}, 29:{male:239,female:172}, 30:{male:248,female:185},
+        31:{male:260,female:201}, 32:{male:276,female:222}, 33:{male:296,female:248}, 34:{male:320,female:278}, 35:{male:346,female:310},
+        36:{male:377,female:345}, 37:{male:405,female:376}, 38:{male:434,female:404}, 39:{male:466,female:431}, 40:{male:498,female:458},
+        41:{male:539,female:480}, 42:{male:582,female:515}, 43:{male:632,female:553}, 44:{male:687,female:596}, 45:{male:749,female:644},
+        46:{male:817,female:700}, 47:{male:882,female:753}, 48:{male:947,female:804}, 49:{male:1016,female:856}, 50:{male:1091,female:903},
+        51:{male:1149,female:954}, 52:{male:1238,female:988}, 53:{male:1340,female:1015}, 54:{male:1454,female:1041}, 55:{male:1584,female:1072},
+        56:{male:1748,female:1135}, 57:{male:1933,female:1222}, 58:{male:2130,female:1307}, 59:{male:2323,female:1415}, 60:{male:2579,female:1570},
+        61:{male:2907,female:1767}, 62:{male:3233,female:1977}, 63:{male:3599,female:2168}, 64:{male:4012,female:2373}, 65:{male:4640,female:2769}
+    };
+
+    let currentGender = 'male'; let currentPlanId = 2; let mainSumInsured = 200000; let ciSumInsured = 2000000;
+
+    function calculateExperience() {
+        // ปรับตั้งค่าวันที่เริ่มต้นเพื่อให้คำนวณอายุงานได้ครอบคลุม
+        let start = new Date(2022, 4, 20); 
+        let now = new Date();
+        let years = now.getFullYear() - start.getFullYear(); 
+        let months = now.getMonth() - start.getMonth(); 
+        let days = now.getDate() - start.getDate();
+        
+        if(days < 0){ months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+        if(months < 0){ years--; months += 12; }
+        
+        // บังคับแสดงผลทั้ง "ปี" และ "เดือน" ให้ครบถ้วนตามต้องการ
+        document.getElementById('experience-text').innerText = `${years} ปี ${months} เดือน`;
+    }
+
+    function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function parseNumber(str) { return parseInt(str.replace(/,/g, '')) || 0; }
+    function formatShortSum(num) { return num >= 1000000 ? (num/1000000) + 'M' : (num >= 1000 ? (num/1000) + 'K' : num); }
+
+    function setGender(g) {
+        currentGender = g;
+        document.getElementById('btn-male').classList.remove('active'); document.getElementById('btn-female').classList.remove('active');
+        document.getElementById(`btn-${g}`).classList.add('active');
+        document.getElementById('sticky-gender-text').innerText = g === 'male' ? 'ชาย' : 'หญิง';
+        document.getElementById('sticky-avatar-img').src = g === 'male' ? 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135789.png';
+        calculate();
+    }
+
+    function selectPlan(id) {
+        currentPlanId = id;
+        document.querySelectorAll('.plan-opt-btn').forEach(btn => btn.classList.remove('active'));
+        if(id > 0) {
+            document.getElementById(`plan-${id}`).classList.add('active'); mainSumInsured = 200000; 
+            ciSumInsured = [0, 1000000, 2000000, 3000000, 5000000, 10000000][id];
+        }
+        updateSlidersUI(); calculate();
+    }
+
+    function handleMainSlider(val) { currentPlanId = 0; mainSumInsured = parseInt(val); document.querySelectorAll('.plan-opt-btn').forEach(b => b.classList.remove('active')); updateSlidersUI(); calculate(); }
+    function handleMainManualInput(val) { let num = Math.max(100000, parseNumber(val)); handleMainSlider(num); }
+    function handleCISlider(val) { currentPlanId = 0; ciSumInsured = parseInt(val); document.querySelectorAll('.plan-opt-btn').forEach(b => b.classList.remove('active')); updateSlidersUI(); calculate(); }
+    function handleCIManualInput(val) { let num = Math.max(500000, parseNumber(val)); handleCISlider(num); }
+
+    function updateSlidersUI() {
+        document.getElementById('main-slider').value = mainSumInsured; document.getElementById('main-display-input').value = formatNumber(mainSumInsured);
+        document.getElementById('ci-slider').value = ciSumInsured; document.getElementById('ci-display-input').value = formatNumber(ciSumInsured);
+    }
+
+    function calculate() {
+        let age = parseInt(document.getElementById('age-input').value) || 0;
+        document.getElementById('sticky-age-text').innerText = age;
+        
+        let sumError = document.getElementById('sum-error');
+        if (age < 16 || age > 65) {
+            sumError.innerText = "*แพ็กเกจนี้รับประกันอายุ 16 - 65 ปี"; sumError.style.display = 'block'; resetDisplay(); return;
+        } else { sumError.style.display = 'none'; }
+
+        let planTitle = currentPlanId ? `แผนคุ้มครองรวม ${formatShortSum(mainSumInsured+ciSumInsured).replace('M',' ล้านบาท')}` : "แผนปรับแต่งเอง";
+        let stickyPlanText = currentPlanId ? ["","แผน S","แผน M","แผน L","แผน XL","แผน XXL"][currentPlanId] : `ออม ${formatShortSum(mainSumInsured)} + โรค ${formatShortSum(ciSumInsured)}`;
+
+        document.getElementById('display-plan-sub').innerText = planTitle;
+        document.getElementById('display-main-sum').innerText = formatNumber(mainSumInsured);
+        document.getElementById('display-ci-sum').innerText = formatNumber(ciSumInsured);
+        document.getElementById('sticky-plan-text').innerText = stickyPlanText;
+
+        let premiumMain = Math.ceil((rateTableMain[age] ? rateTableMain[age][currentGender] : 0) * (mainSumInsured / 100000));
+        let premiumCI = Math.ceil((rateTableCI[age] ? rateTableCI[age][currentGender] : 0) * (ciSumInsured / 100000));
+        let total = premiumMain + premiumCI;
+        let totalPremium20Y = premiumMain * 20;
+
+        document.getElementById('main-price').innerText = formatNumber(premiumMain) + " บาท";
+        document.getElementById('ci-price').innerText = formatNumber(premiumCI) + " บาท";
+        document.getElementById('total-price').innerText = formatNumber(total);
+        document.getElementById('sticky-price-amount').innerText = formatNumber(total);
+        
+        // Update coverage table
+        document.getElementById('tbl-early-stage').innerText = formatNumber(ciSumInsured * 0.2);
+        document.getElementById('tbl-last-stage-1').innerText = formatNumber(ciSumInsured);
+        document.getElementById('tbl-last-stage-2').innerText = formatNumber(ciSumInsured * 0.8);
+        document.getElementById('tbl-death-1').innerText = formatNumber(mainSumInsured + ciSumInsured);
+        document.getElementById('tbl-death-2').innerText = formatNumber(mainSumInsured + (ciSumInsured * 0.8));
+        document.getElementById('tbl-death-3').innerText = formatNumber(mainSumInsured);
+        document.getElementById('tbl-maturity').innerText = formatNumber(mainSumInsured);
+
+        // Update Maturity (90/20) Chart
+        document.getElementById('mat-cov-val').innerText = formatNumber(mainSumInsured);
+        document.getElementById('mat-annual-premium').innerText = formatNumber(premiumMain) + " บ.";
+        document.getElementById('mat-total-premium').innerText = formatNumber(totalPremium20Y) + " บ.";
+        document.getElementById('mat-return-val').innerText = formatNumber(mainSumInsured) + " บ.";
+        document.getElementById('mat-dynamic-sum').innerText = formatNumber(mainSumInsured);
+
+        // Update Flowchart Modal
+        let amounts = document.querySelectorAll('.ig-txt-amt');
+        if(amounts.length >= 4) {
+            amounts[0].innerText = formatNumber(ciSumInsured * 0.2); // 20%
+            amounts[1].innerText = formatNumber(ciSumInsured * 0.8); // 80%
+            amounts[2].innerText = formatNumber(ciSumInsured);       // 100%
+            amounts[3].innerText = formatNumber(ciSumInsured);       // 100%
+        }
+        let igTitleSum = document.getElementById('ig-dynamic-sum');
+        if(igTitleSum) igTitleSum.innerText = formatNumber(ciSumInsured);
+    }
+
+    function resetDisplay() {
+        ['main-price','ci-price','total-price','sticky-price-amount','tbl-early-stage','tbl-last-stage-1','tbl-last-stage-2','tbl-death-1','tbl-death-2','tbl-death-3','tbl-maturity'].forEach(id => document.getElementById(id).innerText = "-");
+    }
+
+    function sendToLine() {
+        let age = document.getElementById('age-input').value; let price = document.getElementById('sticky-price-amount').innerText;
+        if(price === '-' || price === '0') { alert("กรุณาตรวจสอบอายุ (16-65 ปี)"); return; }
+        let msg = `สนใจ ${document.getElementById('display-plan-sub').innerText}\nเพศ: ${currentGender==='male'?'ชาย':'หญิง'}\nอายุ: ${age} ปี\nทุนชีวิตเงินออม: ${formatNumber(mainSumInsured)}\nทุน 50 โรคร้ายแรง: ${formatNumber(ciSumInsured)}\nเบี้ยรวมประมาณ: ${price} บาท/ปี`;
+        window.open("https://line.me/R/oaMessage/@toifwd/?" + encodeURIComponent(msg), '_blank');
+    }
+
+    window.addEventListener('scroll', () => { document.getElementById('sticky-bar').classList.toggle('show', window.scrollY > 300); });
+
+    // --- Modal Controls --- //
+    function openMaturityModal() { document.getElementById('maturityModal').style.display = 'flex'; }
+    function closeMaturityModal() { 
+        document.getElementById('maturityModal').style.display = 'none'; 
+        if(isMatFullscreen) toggleMatFullscreen(); // Reset fullscreen
+    }
+    
+    function openFlowchartModal() { document.getElementById('flowchartModal').style.display = 'flex'; }
+    function closeFlowchartModal() { 
+        document.getElementById('flowchartModal').style.display = 'none'; 
+        if(isFlowFullscreen) toggleFlowFullscreen(); // Reset fullscreen
+    }
+    
+    function openDiseaseListModal() { document.getElementById('diseaseListModal').style.display = 'flex'; }
+    function closeDiseaseListModal() { document.getElementById('diseaseListModal').style.display = 'none'; }
+
+    // --- Fullscreen Toggle Logic --- //
+    let isMatFullscreen = false;
+    function toggleMatFullscreen() {
+        isMatFullscreen = !isMatFullscreen;
+        const inner = document.getElementById('matContentInner');
+        const icon = document.getElementById('matFsIcon');
+        const text = document.getElementById('matFsText');
+        if(isMatFullscreen) {
+            inner.classList.add('is-fullscreen');
+            icon.className = 'fa-solid fa-compress';
+            text.innerText = 'ย่อหน้าจอ';
+        } else {
+            inner.classList.remove('is-fullscreen');
+            icon.className = 'fa-solid fa-expand';
+            text.innerText = 'ดูเต็มจอ / เลื่อนดู';
+        }
+    }
+
+    let isFlowFullscreen = false;
+    function toggleFlowFullscreen() {
+        isFlowFullscreen = !isFlowFullscreen;
+        const inner = document.getElementById('flowContentInner');
+        const icon = document.getElementById('flowFsIcon');
+        const text = document.getElementById('flowFsText');
+        if(isFlowFullscreen) {
+            inner.classList.add('is-fullscreen');
+            icon.className = 'fa-solid fa-compress';
+            text.innerText = 'ย่อหน้าจอ';
+        } else {
+            inner.classList.remove('is-fullscreen');
+            icon.className = 'fa-solid fa-expand';
+            text.innerText = 'ดูเต็มจอ / เลื่อนดู';
+        }
+    }
+
+    // --- ฟังก์ชันบันทึกและแชร์รูปภาพ --- //
+    // เพิ่มการรับ Parameter เพื่อให้ใช้ร่วมกันได้ทุกหน้า
+    async function captureAndShare(elementId, btnId, fileName) {
+        const element = document.getElementById(elementId);
+        const btn = document.getElementById(btnId);
+        const originalText = btn.innerHTML;
+        
+        // แสดงสถานะโหลด
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้างภาพ...';
+        btn.style.pointerEvents = 'none';
+
+        try {
+            // จับภาพ DOM Element
+            const canvas = await html2canvas(element, { 
+                scale: 2, // เพิ่มความคมชัด
+                useCORS: true, 
+                backgroundColor: "#ffffff" 
+            });
+            
+            const imageURL = canvas.toDataURL("image/png");
+
+            // ดึงไฟล์ Blob สำหรับใช้งาน Share API
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], fileName, { type: 'image/png' });
+
+                // เช็คว่า Browser รองรับ Web Share API และสามารถแชร์ไฟล์ได้หรือไม่ (ส่วนใหญ่ใช้งานได้บนมือถือ)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'รายละเอียดแผนประกัน',
+                            text: 'แผนประกันเงินออม + 50 โรคร้ายแรง จาก FWD',
+                            files: [file]
+                        });
+                    } catch (e) {
+                        console.log('Share canceled or failed', e);
+                        // ถ้าแชร์ไม่สำเร็จ (เช่นกดยกเลิก) ก็โหลดเป็นไฟล์แทน
+                        downloadImage(imageURL, fileName);
+                    }
+                } else {
+                    // สำหรับ PC หรือ Browser ที่ไม่รองรับ ให้โหลดไฟล์ภาพลงเครื่องโดยตรง
+                    downloadImage(imageURL, fileName);
+                }
+            }, 'image/png');
+
+        } catch (error) {
+            console.error('Error capturing image:', error);
+            alert('เกิดข้อผิดพลาดในการสร้างภาพ กรุณาลองใหม่อีกครั้ง');
+        } finally {
+            // คืนค่าปุ่มกลับเหมือนเดิม
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
+        }
+    }
+
+    // ฟังก์ชันช่วยสำหรับการดาวน์โหลดรูปภาพลงเครื่อง
+    function downloadImage(dataUrl, fileName) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // 3. Disease Detail Logic
+    const diseaseData = {
+        'e1': { title: '1. โรคมะเร็งระยะไม่ลุกลาม', desc: 'เซลล์มะเร็งที่เพิ่งเกิดขึ้นในเนื้อเยื่อชั้นตื้น ยังไม่กระจายตัวลึกเข้าไปในอวัยวะข้างเคียง', cause: 'ความผิดปกติของเซลล์ พันธุกรรม หรือสารก่อมะเร็ง', symptom: 'มักยังไม่มีอาการเจ็บปวด แต่อาจพบก้อนเนื้อเล็กๆ', treatment: 'ผ่าตัดนำก้อนเนื้อออก อาจร่วมกับการฉายแสง', impact: 'ลุกลามไปยังอวัยวะอื่นได้หากปล่อยทิ้งไว้' },
+        'e2': { title: '2. โรคหลอดเลือดหัวใจตีบ (สวนหัวใจ)', desc: 'ภาวะเส้นเลือดหัวใจตีบแคบ ที่ต้องรักษาด้วยการทำบอลลูนขยาย หรือใส่ขดลวด', cause: 'ไขมันสะสม พฤติกรรมการกิน สูบบุหรี่จัด', symptom: 'เจ็บแน่นหน้าอกเหมือนมีอะไรมาทับ เหนื่อยง่าย', treatment: 'สอดสายสวนเพื่อขยายหลอดเลือด', impact: 'เสี่ยงหัวใจวายเฉียบพลันหากอุดตัน' },
+        'e3': { title: '3. ผ่าตัดลอกหลอดเลือดแดงคาโรติด', desc: 'การผ่าตัดเอาคราบไขมันที่อุดตันในเส้นเลือดใหญ่ที่คอออก', cause: 'คราบไขมันสะสม', symptom: 'หน้ามืด วิงเวียน ชาใบหน้าชั่วคราว', treatment: 'ผ่าตัดเปิดหลอดเลือดที่คอ', impact: 'เสี่ยงอัมพฤกษ์สูงหากไขมันหลุดไปอุดตันสมอง' },
+        'e4': { title: '4. เส้นเลือดสมองโป่งพอง (รักษาด้วยขดลวด)', desc: 'รักษาเส้นเลือดสมองโป่งพองโดยสอดสายสวนใส่ขดลวดอุดรอยโป่ง', cause: 'ผนังหลอดเลือดอ่อนแอ หรือความดันสูง', symptom: 'ปวดศีรษะรุนแรงเฉียบพลัน คลื่นไส้', treatment: 'สอดสายสวนนำขดลวดไปอุดบริเวณที่โป่งพอง', impact: 'หากเส้นเลือดแตกจะเป็นอัมพาตหรือเสียชีวิต' },
+        'e5': { title: '5. ใส่สายสวนเส้นเลือดแดงบริเวณคอ', desc: 'รักษาความผิดปกติของเส้นเลือดสมองผ่านสายสวนที่คอ', cause: 'หลอดเลือดตีบแคบ', symptom: 'ปวดหัว ทรงตัวผิดปกติ ชาครึ่งซีก', treatment: 'สอดสายสวนเข้ารักษา', impact: 'เสี่ยงเส้นเลือดสมองตีบ แตก ตัน' },
+        'l1': { title: '1. โรคมะเร็งระยะลุกลาม', desc: 'เซลล์มะเร็งที่แพร่กระจายไปอวัยวะอื่น', cause: 'เซลล์แบ่งตัวผิดปกติ', symptom: 'น้ำหนักลดฮวบ คลำเจอก้อนโต ปวด', treatment: 'ผ่าตัด ฉายแสง เคมีบำบัด', impact: 'อวัยวะล้มเหลว เจ็บปวดทรมาน' },
+        'l2': { title: '2. กล้ามเนื้อหัวใจตายเฉียบพลัน', desc: 'หลอดเลือดอุดตันกะทันหัน หัวใจขาดเลือด', cause: 'ลิ่มเลือดอุดตัน', symptom: 'เจ็บหน้าอกรุนแรง หายใจไม่ออก เหงื่อแตก', treatment: 'ทำบอลลูนฉุกเฉิน ให้ยาละลายลิ่มเลือด', impact: 'หัวใจเสียหายถาวร ประสิทธิภาพปั๊มเลือดลดลง' },
+        'l3': { title: '3. ผ่าตัดเส้นเลือดหัวใจ (บายพาส)', desc: 'การผ่าตัดทำทางเดินเลือดใหม่ให้หัวใจ', cause: 'ตีบตันหลายเส้นรุนแรง', symptom: 'เจ็บหน้าอกเวลาออกแรง เหนื่อยหอบ', treatment: 'เปิดหน้าอกต่อเส้นเลือดใหม่', impact: 'ต้องผ่านการผ่าตัดใหญ่ ใช้เวลาฟื้นตัวนาน' },
+        'l4': { title: '4. ผ่าตัดลิ้นหัวใจ', desc: 'เปลี่ยนหรือซ่อมแซมลิ้นหัวใจที่พัง', cause: 'ความเสื่อม หรือติดเชื้อ', symptom: 'เหนื่อยหอบ นอนราบไม่ได้ ขาบวม', treatment: 'ผ่าตัดเปิดหัวใจเปลี่ยนลิ้น', impact: 'น้ำท่วมปอด หายใจไม่ออกหากไม่รักษา' },
+        'l5': { title: '5. ผ่าตัดเส้นเลือดแดงใหญ่ (เอออร์ต้า)', desc: 'ซ่อมแซมเส้นเลือดแดงใหญ่ที่มีแนวโน้มปริแตก', cause: 'ความดันสูง ไขมันในเลือดสูง', symptom: 'ปวดหน้าอก/หลังรุนแรงเหมือนถูกฉีก', treatment: 'ผ่าตัดใส่หลอดเลือดเทียม', impact: 'หากแตกจะเสียชีวิตทันที' },
+        'l6': { title: '6. โรคกล้ามเนื้อหัวใจ', desc: 'กล้ามเนื้อหัวใจทำงานบกพร่อง ปั๊มเลือดลดลง', cause: 'พันธุกรรม ไวรัส แอลกอฮอล์', symptom: 'เหนื่อยง่าย ขาบวม หัวใจเต้นผิดจังหวะ', treatment: 'ทานยา ใส่เครื่องกระตุ้นหัวใจ', impact: 'หัวใจล้มเหลวเรื้อรัง ทำงานหนักไม่ได้' },
+        'l7': { title: '7. โรคเส้นเลือดหัวใจตีบ', desc: 'หลอดเลือดตีบรุนแรง เลือดเลี้ยงไม่พอ', cause: 'ไขมันอุดตัน', symptom: 'แน่นหน้าอกร้าวไปแขน', treatment: 'ยา ทำบอลลูน บายพาส', impact: 'เสี่ยงกล้ามเนื้อหัวใจตาย' },
+        'l8': { title: '8. รูมาตอยด์ชนิดรุนแรง', desc: 'โรคแพ้ภูมิตัวเองทำลายข้อต่อ', cause: 'ภูมิคุ้มกันผิดปกติ', symptom: 'ข้อปวด บวม บิดเบี้ยวผิดรูป', treatment: 'ยากดภูมิ กายภาพ', impact: 'พิการหยิบจับไม่ได้ถาวร' },
+        'l9': { title: '9. โรคกล้ามเนื้ออักเสบ', desc: 'กล้ามเนื้ออักเสบเรื้อรังจนอ่อนแรง', cause: 'ภูมิคุ้มกันผิดปกติ', symptom: 'ลุกนั่งลำบาก ยกแขนไม่ขึ้น', treatment: 'สเตียรอยด์ ปรับภูมิ', impact: 'ลุกเดินไม่ได้ ต้องนั่งรถเข็น' },
+        'l10':{ title: '10. กระดูกสันหลังคด (ผ่าตัด)', desc: 'คดรุนแรงจนต้องดัดเหล็ก', cause: 'ไม่ทราบสาเหตุ มักเกิดวัยรุ่น', symptom: 'หลังเบี้ยว เบียดปอดหายใจลำบาก', treatment: 'ผ่าตัดยึดน็อตและเหล็ก', impact: 'ปอดหัวใจถูกเบียด เจ็บปวด' },
+        'l11':{ title: '11. หลอดเลือดสมองแตก/อุดตัน (Stroke)', desc: 'เลือดไม่ไปเลี้ยงสมอง', cause: 'ความดันสูง ลิ่มเลือดอุดตัน', symptom: 'อ่อนแรงครึ่งซีก ปากเบี้ยว', treatment: 'ยาละลายลิ่มเลือด ผ่าตัดสมอง', impact: 'อัมพฤกษ์ อัมพาตครึ่งซีก' },
+        'l12':{ title: '12. เนื้องอกในสมอง(ไม่ใช่มะเร็ง)', desc: 'ก้อนเนื้อโตเบียดสมอง', cause: 'เซลล์ผิดปกติ', symptom: 'ปวดหัว ชัก ตาพร่า', treatment: 'ผ่าตัดเปิดกะโหลกเอาออก', impact: 'ชัก ความจำเสื่อม พิการ' },
+        'l13':{ title: '13. สมองอักเสบจากไวรัส', desc: 'เนื้อสมองอักเสบติดเชื้อ', cause: 'ไวรัสเข้าสมอง', symptom: 'ไข้สูง สับสน ชัก ซึม', treatment: 'ยาต้านไวรัส ICU', impact: 'สมองพังถาวร ชักเรื้อรัง' },
+        'l14':{ title: '14. เยื่อหุ้มสมองอักเสบแบคทีเรีย', desc: 'ติดเชื้อรุนแรงที่เยื่อหุ้มสมอง', cause: 'แบคทีเรียเข้ากระแสเลือด', symptom: 'คอแข็ง ไข้สูง ปวดหัวสุดขีด', treatment: 'ยาปฏิชีวนะด่วน', impact: 'อันตรายถึงชีวิต ความพิการหลงเหลือ' },
+        'l15':{ title: '15. โรคเซลล์ประสาทการเคลื่อนไหว', desc: 'เซลล์สั่งการเสื่อม (ALS)', cause: 'ความเสื่อมตามธรรมชาติ', symptom: 'ของหล่นมือ กล้ามเนื้อฝ่อลีบ', treatment: 'รักษาตามอาการ เครื่องช่วยหายใจ', impact: 'อัมพาตทั้งตัว นอนติดเตียง' },
+        'l16':{ title: '16. อัลไซเมอร์', desc: 'สมองเสื่อมรุนแรง', cause: 'โปรตีนสะสมทำลายสมอง', symptom: 'หลงลืม จำคนในบ้านไม่ได้', treatment: 'ยาชะลอความเสื่อม', impact: 'สูญเสียความเป็นตัวเอง ดูแลตัวเองไม่ได้' },
+        'l17':{ title: '17. พาร์กินสัน', desc: 'สมองส่วนควบคุมเคลื่อนไหวเสื่อม', cause: 'โดปามีนลดลง', symptom: 'สั่น เกร็ง เคลื่อนไหวช้า', treatment: 'ยา ฝังเครื่องกระตุ้นสมอง', impact: 'สั่นรุนแรง เดินลำบาก ช่วยเหลือตัวเองไม่ได้' },
+        'l18':{ title: '18. หลอดเลือดสมองโป่งพอง (ผ่าตัด)', desc: 'ผ่าตัดเปิดกะโหลกหนีบเส้นเลือด', cause: 'ผนังบาง โป่งพอง', symptom: 'ถ้าแตกจะปวดหัวรุนแรงที่สุด', treatment: 'ผ่าตัดหนีบคลิปที่รอยโป่ง', impact: 'แตกแล้วจะโคม่าหรือเสียชีวิต' },
+        'l19':{ title: '19. มัลติเพิล สเคลอโรสิส', desc: 'ปลอกประสาทอักเสบเรื้อรัง', cause: 'ภูมิคุ้มกันทำลายปลอกประสาท', symptom: 'ตาบอดชั่วคราว ชา อ่อนแรง', treatment: 'ยากดภูมิ สเตียรอยด์', impact: 'ประสาทพังถาวร อัมพาต' },
+        'l20':{ title: '20. เปลี่ยนอวัยวะ/ปลูกถ่ายไขกระดูก', desc: 'รับบริจาคหัวใจ ไต ตับ ปอด', cause: 'อวัยวะพัง มะเร็งเลือด', symptom: 'อวัยวะล้มเหลว', treatment: 'ผ่าตัดปลูกถ่าย', impact: 'ต้องกินยากดภูมิไปตลอดชีวิต' },
+        'l21':{ title: '21. ไตวายเรื้อรัง', desc: 'ไตหยุดทำงานทั้งสองข้าง', cause: 'เบาหวาน ความดัน', symptom: 'ปัสสาวะไม่ออก บวม คัน', treatment: 'ฟอกไต ล้างไต', impact: 'ต้องฟอกเลือดตลอดชีวิต' },
+        'l22':{ title: '22. ตับวาย', desc: 'ตับหยุดทำงานถาวร', cause: 'สุรา ไวรัสบี/ซี', symptom: 'ตัวเหลือง ท้องมาร อาเจียนเลือด', treatment: 'เปลี่ยนตับ', impact: 'พิษคั่งสมอง เสียชีวิต' },
+        'l23':{ title: '23. ปอดอุดกั้นเรื้อรังรุนแรง', desc: 'ปอดพังถาวร', cause: 'สูบบุหรี่ ฝุ่น', symptom: 'หอบเหนื่อยรุนแรง ตัวเขียว', treatment: 'ออกซิเจนตลอดเวลา', impact: 'หายใจเองไม่ได้ ทรมาน' },
+        'l24':{ title: '24. ไวรัสตับอักเสบขั้นรุนแรง', desc: 'เนื้อตับตายเฉียบพลันจากไวรัส', cause: 'ติดเชื้อไวรัส', symptom: 'ตัวเหลือง ตับโต ซึม', treatment: 'ยาต้านไวรัส เปลี่ยนตับ', impact: 'ตับวายตายเฉียบพลัน' },
+        'l25':{ title: '25. ลูปัส (SLE)', desc: 'ภูมิคุ้มกันทำลายร่างกายตัวเองรุนแรง', cause: 'พันธุกรรม/ฮอร์โมน', symptom: 'ผื่น ข้ออักเสบ ไตพัง', treatment: 'สเตียรอยด์ ยากดภูมิ', impact: 'อวัยวะภายในล้มเหลว' },
+        'l26':{ title: '26. ตับอ่อนอักเสบกลับเป็นซ้ำเรื้อรัง', desc: 'ตับอ่อนถูกทำลายเรื้อรัง', cause: 'แอลกอฮอล์ นิ่ว', symptom: 'ปวดท้องแสนสาหัส อาหารไม่ย่อย', treatment: 'งดอาหาร ผ่าตัด', impact: 'ระบบย่อยพัง ผอมแห้ง ขาดสารอาหาร' },
+        'l27':{ title: '27. โรคถุงน้ำในไต', desc: 'ถุงน้ำทำลายเนื้อไต', cause: 'พันธุกรรม', symptom: 'ปวดเอว ปัสสาวะเลือด', treatment: 'เจาะน้ำ ฟอกไต', impact: 'ไตวาย' },
+        'l28':{ title: '28. ลำไส้อักเสบเป็นแผลรุนแรง', desc: 'ลำไส้ใหญ่เป็นแผลเรื้อรัง', cause: 'ภูมิคุ้มกันผิดปกติ', symptom: 'ถ่ายเป็นเลือด ปวดเกร็ง', treatment: 'ยากดภูมิ ผ่าตัดลำไส้ทิ้ง', impact: 'เสี่ยงลำไส้ทะลุ' },
+        'l29':{ title: '29. การสูญเสียการได้ยิน', desc: 'หูหนวกถาวร', cause: 'ยาติดเชื้อ เสียงดัง', symptom: 'ไม่ได้ยินอะไรเลย', treatment: 'ประสาทหูเทียม', impact: 'หูหนวก 100%' },
+        'l30':{ title: '30. การสูญเสียความสามารถการพูด', desc: 'เป็นใบ้ถาวร', cause: 'เส้นเสียงพัง สมองพัง', symptom: 'เปล่งเสียงไม่ได้', treatment: 'เครื่องช่วยพูด', impact: 'สื่อสารด้วยเสียงไม่ได้' },
+        'l31':{ title: '31. แผลไหม้ฉกรรจ์', desc: 'ไฟลวกระดับ 3 กินพื้นที่เกิน 20%', cause: 'ไฟไหม้ สารเคมี', symptom: 'ผิวไหม้เกรียม', treatment: 'ปลูกถ่ายผิวหนัง', impact: 'ติดเชื้อ เจ็บปวดทรมานสาหัส' },
+        'l32':{ title: '32. อัมพาตแขนหรือขา', desc: 'ขยับแขน/ขาไม่ได้ถาวร >2ข้าง', cause: 'อุบัติเหตุ โรคสมอง', symptom: 'ไม่มีแรง ขยับไม่ได้', treatment: 'กายภาพ', impact: 'เดินไม่ได้ เป็นภาระครอบครัว' },
+        'l33':{ title: '33. โรคโปลิโอ', desc: 'ไวรัสทำลายไขสันหลัง', cause: 'ไวรัสโปลิโอ', symptom: 'แขนขาลีบ อ่อนแรง', treatment: 'กายภาพ', impact: 'พิการเดินไม่ได้ถาวร' },
+        'l34':{ title: '34. การสูญเสียการดำรงชีพอย่างอิสระ', desc: 'ทำกิจวัตรเองไม่ได้', cause: 'ชรา ป่วยหนัก', symptom: 'กิน อาบน้ำ เองไม่ได้', treatment: 'พยาบาลดูแล', impact: 'ติดเตียง 100%' },
+        'l35':{ title: '35. ตาบอด', desc: 'มืดสนิทสองข้าง', cause: 'เบาหวาน อุบัติเหตุ', symptom: 'มองไม่เห็น', treatment: 'ไม่สามารถรักษาได้', impact: 'โลกมืดมิด' },
+        'l36':{ title: '36. การฉีกขาดของรากประสาทต้นแขน', desc: 'ประสาทคอขาด แขนเป็นอัมพาต', cause: 'อุบัติเหตุดึงรั้ง', symptom: 'แขนห้อย ไม่รู้สึก', treatment: 'ผ่าตัดต่อเส้นประสาท', impact: 'แขนใช้งานไม่ได้ถาวร' },
+        'l37':{ title: '37. โรคหนังแข็งชนิดลุกลาม', desc: 'ผิวหนังและอวัยวะแข็งตัว', cause: 'ภูมิคุ้มกันผิดปกติสร้างพังผืด', symptom: 'ผิวตึง กลืนลำบาก', treatment: 'ยากดภูมิ', impact: 'ขยับตัวไม่ได้ ปอดแข็ง' },
+        'l38':{ title: '38. โรคเท้าช้าง', desc: 'ท่อน้ำเหลืองตัน ขาบวมโต', cause: 'พยาธิ', symptom: 'ขาบวมใหญ่ผิวขรุขระ', treatment: 'ยา ผ่าตัด', impact: 'เดินลำบาก' },
+        'l39':{ title: '39. การทุพพลภาพถาวรสิ้นเชิง (ก่อนอายุ 70 ปี)', desc: 'ทำงานหาเงินไม่ได้ถาวร', cause: 'ป่วยหนัก อุบัติเหตุ', symptom: 'ทุพพลภาพ', treatment: 'กายภาพ', impact: 'ขาดรายได้ถาวร' },
+        'l40':{ title: '40. โรคโลหิตจางจากไขกระดูกไม่สร้างเม็ดโลหิต', desc: 'ไขกระดูกพัง', cause: 'สารเคมี ยา', symptom: 'ซีด เลือดออกง่าย', treatment: 'เปลี่ยนไขกระดูก', impact: 'ภูมิคุ้มกันตก เสี่ยงเลือดไหลตาย' },
+        'l41':{ title: '41. โรคเนื้อเยื่อพังผืดอักเสบติดเชื้อและเป็นเนื้อตาย', desc: 'แบคทีเรียกินเนื้อ', cause: 'ติดเชื้อแผล', symptom: 'แผลลามรวดเร็ว ดำคล้ำ', treatment: 'ผ่าตัดเฉือนเนื้อ', impact: 'ต้องตัดแขนขาทิ้ง' },
+        'l42':{ title: '42. โรคแรงดันในหลอดเลือดแดงปอดสูงแบบปฐมภูมิ', desc: 'หัวใจขวาทำงานหนัก', cause: 'เส้นเลือดปอดตีบเอง', symptom: 'หอบ หน้ามืด', treatment: 'ยาขยายหลอดเลือดปอด', impact: 'หัวใจวาย' },
+        'l43':{ title: '43. ภาวะโคม่า', desc: 'หมดสติลึก', cause: 'สมองบาดเจ็บ ขาดออกซิเจน', symptom: 'ไม่รู้สึกตัว', treatment: 'เครื่องช่วยหายใจ', impact: 'เจ้าชายนิทรา' },
+        'l44':{ title: '44. การบาดเจ็บที่ศีรษะอย่างรุนแรง', desc: 'สมองกระทบกระเทือนหนัก', cause: 'อุบัติเหตุ', symptom: 'สมองบวม เลือดออก', treatment: 'ผ่าตัดสมอง', impact: 'อัมพาต ความจำเสื่อม' },
+        'l45':{ title: '45. ภาวะอะแพลลิก', desc: 'เป็นผัก หายใจได้แต่ไม่รับรู้', cause: 'สมองขาดออกซิเจนนาน', symptom: 'ลืมตาได้แต่ไม่ตอบสนอง', treatment: 'ประคับประคอง', impact: 'สูญเสียการรับรู้ 100%' }
+    };
+
+    function openDiseaseModal(id) {
+        document.getElementById('modalTitle').innerText = diseaseData[id].title;
+        document.getElementById('modalDesc').innerText = diseaseData[id].desc;
+        document.getElementById('modalCause').innerText = diseaseData[id].cause;
+        document.getElementById('modalSymptom').innerText = diseaseData[id].symptom;
+        document.getElementById('modalTreatment').innerText = diseaseData[id].treatment;
+        document.getElementById('modalImpact').innerText = diseaseData[id].impact;
+        document.getElementById('diseaseDetailModal').style.display = 'flex';
+    }
+    
+    function closeDiseaseModal() { 
+        document.getElementById('diseaseDetailModal').style.display = 'none'; 
+    }
+
+    // กดด้านนอกเพื่อปิด
+    window.onclick = function(event) {
+        const matModal = document.getElementById('maturityModal');
+        const flowModal = document.getElementById('flowchartModal');
+        const listModal = document.getElementById('diseaseListModal');
+        const detailModal = document.getElementById('diseaseDetailModal');
+        
+        if (event.target == matModal) { closeMaturityModal(); }
+        if (event.target == flowModal) { closeFlowchartModal(); }
+        if (event.target == listModal) { closeDiseaseListModal(); }
+        if (event.target == detailModal) { closeDiseaseModal(); }
+    }
+
+    calculateExperience(); setGender('male'); updateSlidersUI();
+</script>
+
+</body>
+</html>
