@@ -1127,7 +1127,7 @@
         let age = document.getElementById('age-input').value; let price = document.getElementById('sticky-price-amount').innerText;
         if(price === '-' || price === '0') { alert("กรุณาตรวจสอบอายุ (16-65 ปี)"); return; }
         let msg = `สนใจ ${document.getElementById('display-plan-sub').innerText}\nเพศ: ${currentGender==='male'?'ชาย':'หญิง'}\nอายุ: ${age} ปี\nทุนชีวิตเงินออม: ${formatNumber(mainSumInsured)}\nทุน 50 โรคร้ายแรง: ${formatNumber(ciSumInsured)}\nเบี้ยรวมประมาณ: ${price} บาท/ปี`;
-        window.open("https://line.me/R/oaMessage/@toifwd/?" + encodeURIComponent(msg), '_blank');
+        window.open("https://line.me/R/oaMessage/@aumfwd/?" + encodeURIComponent(msg), '_blank');
     }
 
     window.addEventListener('scroll', () => { document.getElementById('sticky-bar').classList.toggle('show', window.scrollY > 300); });
